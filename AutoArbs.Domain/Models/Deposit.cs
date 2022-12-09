@@ -12,7 +12,7 @@ namespace AutoArbs.Domain.Models
         [Key]
         public string TransactionId { get; set; }
         [Required(ErrorMessage = "Username is required")]
-        public string Username { get; set; }
+        public string Deposit_Username { get; set; }
 
         [Required(ErrorMessage = "Amount is required")]
         public decimal Amount { get; set; }

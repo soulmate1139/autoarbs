@@ -40,7 +40,7 @@ namespace AutoArbs.Infrastructure.Services
 
             var deposit = new Deposit();
             deposit.TransactionId= Convert.ToString(Guid.NewGuid());
-            deposit.Username= depositDto.UserName.ToLower();
+            deposit.Deposit_Username= depositDto.UserName.ToLower();
             deposit.Amount=depositDto.Amount;
             deposit.Method=depositDto.Method;
             deposit.Status="Processing";

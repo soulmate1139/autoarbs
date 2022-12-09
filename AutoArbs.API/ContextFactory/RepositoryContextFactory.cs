@@ -10,7 +10,7 @@ namespace AutoArbs.API.ContextFactory
         {
             var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
             var builder = new DbContextOptionsBuilder<RepositoryContext>()
-            .UseNpgsql(configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AutoArbs.API"));
+            .UseSqlServer(configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AutoArbs.API"));
 
 
             //var builder = new DbContextOptionsBuilder<RepositoryContext>()

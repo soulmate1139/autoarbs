@@ -1,12 +1,13 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
 using AutoArbs.Domain.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoArbs.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/deposit")]
     [ApiController]
     public class DepositController : ControllerBase
     {
@@ -18,14 +19,15 @@ namespace AutoArbs.API.Controllers
         }
 
 
-
-        [HttpPost("Deposit")]
+        [EnableCors("AllowOrigin")]
+        [HttpPost]
         public async Task<IActionResult> CreateDeposit(DepositDto deposit)
         {
             var response = await _serviceManager.DepositService.CreateDeposit(deposit);
             return Ok(response);
         }
 
+        [EnableCors("AllowOrigin")]
         [HttpGet]
         public async Task<IActionResult> GetDepositHistory(string username)
         {

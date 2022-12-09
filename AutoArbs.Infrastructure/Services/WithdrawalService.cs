@@ -41,7 +41,7 @@ namespace AutoArbs.Infrastructure.Services
             var withdraw = new Withdrawal
             {
                 TransactionId= Convert.ToString(Guid.NewGuid()),
-                Username= withdrawalDto.UserName.ToLower(),
+                Withdrawal_Username= withdrawalDto.UserName.ToLower(),
                 Amount=withdrawalDto.Amount,
                 Method=withdrawalDto.Method,
                 Status="Processing",

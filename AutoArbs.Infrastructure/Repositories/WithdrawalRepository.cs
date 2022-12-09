@@ -17,7 +17,7 @@ namespace AutoArbs.Infrastructure.Repositories
 
         public void CreateWithdrawal(Withdrawal withdrawal) => Create(withdrawal);
         
-        public async Task<IEnumerable<Withdrawal>> GetWithdrawalByUserName(string userName, bool trackChanges) => await FindAll(trackChanges).Where(c => c.Username == userName).ToListAsync();
+        public async Task<IEnumerable<Withdrawal>> GetWithdrawalByUserName(string userName, bool trackChanges) => await FindAll(trackChanges).Where(c => c.Withdrawal_Username == userName).ToListAsync();
         
         public Withdrawal GetWithdrawalByTransactionId(string transactionId, bool trackChanges) => FindByCondition(x => x.TransactionId.Equals(transactionId), trackChanges).FirstOrDefault();
         
