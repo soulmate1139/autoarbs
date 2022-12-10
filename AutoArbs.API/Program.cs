@@ -3,13 +3,13 @@ using AutoArbs.API.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddCors(o =>
-{
-    o.AddPolicy("AllowOrigin", builder =>
-    builder.AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod());
-});
+//builder.Services.AddCors(o =>
+//{
+//    o.AddPolicy("AllowOrigin", builder =>
+//    builder.AllowAnyOrigin()
+//    .AllowAnyHeader()
+//    .AllowAnyMethod());
+//});
 
 builder.Services.ConfigureCors();
 builder.Services.ConfigureRepositoryManager();
@@ -23,6 +23,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+const string corsPolicyName = "ApiCORS";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        policy.WithOrigins("https://localhost:7212");
+    });
+});
 var app = builder.Build();
 
 
@@ -33,7 +42,7 @@ var app = builder.Build();
 //    .AllowAnyMethod()
 //    .AllowAnyHeader();
 //});
-app.UseCors("AllowOrigin");
+//app.UseCors("AllowOrigin");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -43,6 +52,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(corsPolicyName);
 //app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
