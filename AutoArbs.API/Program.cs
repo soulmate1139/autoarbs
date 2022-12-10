@@ -3,7 +3,14 @@ using AutoArbs.API.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddCors();
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("AllowOrigin", builder =>
+    builder.AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod());
+});
+
 builder.Services.ConfigureCors();
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
