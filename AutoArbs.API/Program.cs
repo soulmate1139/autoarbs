@@ -33,6 +33,7 @@ var app = builder.Build();
 //    .AllowAnyMethod()
 //    .AllowAnyHeader();
 //});
+app.UseCors("AllowOrigin");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -41,7 +42,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowOrigin");
 app.UseHttpsRedirection();
 //app.UseCors("CorsPolicy");
 app.UseAuthorization();
