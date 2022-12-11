@@ -11,7 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 //    .AllowAnyMethod());
 //});
 
-builder.Services.ConfigureCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+        policy.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
+
+//builder.Services.ConfigureCors();
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureDatabaseContext(builder.Configuration);
@@ -23,15 +31,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-const string corsPolicyName = "ApiCORS";
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(corsPolicyName, policy =>
-    {
-        policy.WithOrigins("https://localhost:7212");
-    });
-});
 var app = builder.Build();
 
 
@@ -53,7 +53,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(corsPolicyName);
+app.UseCors("CorsPolicy");
 //app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
