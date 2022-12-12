@@ -16,7 +16,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
         policy.AllowAnyOrigin()
         .AllowAnyMethod()
-        .AllowAnyHeader());
+        .AllowAnyHeader()
+        .WithExposedHeaders("X-Pagination"));
 });
 
 //builder.Services.ConfigureCors();
