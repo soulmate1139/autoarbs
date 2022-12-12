@@ -1,7 +1,6 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
 using AutoArbs.Domain.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +17,6 @@ namespace AutoArbs.API.Controllers
             _serviceManager=serviceManager;
         }
 
-        [EnableCors("AllowOrigin")]
         [HttpPost("register")]
         public async Task<IActionResult> Enroll(EnrollDto enrollDto)
         {
@@ -26,7 +24,6 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
-        [EnableCors("AllowOrigin")]
         [HttpPost("login")]
         public async Task<IActionResult> SignIn(LoginDto returningUser)
         {

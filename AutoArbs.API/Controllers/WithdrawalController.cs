@@ -1,7 +1,6 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
 using AutoArbs.Domain.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +18,6 @@ namespace AutoArbs.API.Controllers
         }
 
 
-        [EnableCors("AllowOrigin")]
         [HttpPost]
         public async Task<IActionResult> CreateWithdrawal(WithdrawalDto withdrawal)
         {
@@ -27,7 +25,6 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
-        [EnableCors("AllowOrigin")]
         [HttpGet]
         public async Task<IActionResult> GetWithdrawalHistory(string username)
         {
