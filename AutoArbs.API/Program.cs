@@ -11,14 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 //    .AllowAnyMethod());
 //});
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy", policy =>
-        policy.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .WithExposedHeaders("X-Pagination"));
-});
 
 //builder.Services.ConfigureCors();
 builder.Services.ConfigureRepositoryManager();
@@ -32,6 +24,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(setup =>
+{
+    setup.AddDefaultPolicy(policyBuilder =>
+    {
+        //policyBuilder.WithOrigins("");
+        policyBuilder.AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
 
@@ -54,7 +54,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("CorsPolicy");
+app.UseCors();
 //app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
