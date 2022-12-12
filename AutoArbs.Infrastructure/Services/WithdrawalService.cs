@@ -87,7 +87,7 @@ namespace AutoArbs.Infrastructure.Services
             var withdrawalHistories = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
             return new ResponseMessageWithdrawal
             {
-                StatusCode = "201",
+                StatusCode = "200",
                 StatusMessage = "Get Withdrawal History",
                 Data = withdrawalHistories.ToList()
             };

@@ -83,7 +83,7 @@ namespace AutoArbs.Infrastructure.Services
 
             return new ResponseMessageDeposit
             {
-                StatusCode = "201",
+                StatusCode = "200",
                 StatusMessage = "Get Deposit",
                 Data = depositHistories.ToList()
             };
