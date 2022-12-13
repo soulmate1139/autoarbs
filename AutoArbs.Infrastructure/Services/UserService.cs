@@ -26,6 +26,7 @@ namespace AutoArbs.Infrastructure.Services
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
+                        IsSuccess = false,
                         StatusMessage = "Kindly enter a unique password more than 5 letters",
                     };
 
@@ -35,6 +36,7 @@ namespace AutoArbs.Infrastructure.Services
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
+                        IsSuccess = false,
                         StatusMessage = "Email is not available",
                     };
 
@@ -44,6 +46,7 @@ namespace AutoArbs.Infrastructure.Services
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
+                        IsSuccess = false,
                         StatusMessage = "Username is not available",
                     };
 
@@ -62,6 +65,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "201",
+                    IsSuccess = false,
                     StatusMessage = "Account Created",
                     UserData= user
                 };
@@ -72,6 +76,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "500",
+                    IsSuccess = false,
                     StatusMessage = "Account Not Created"
                 };
             }
@@ -87,21 +92,43 @@ namespace AutoArbs.Infrastructure.Services
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
+                        IsSuccess = false,
                         StatusMessage = "Login information is incorrect",
                     };
 
+                //ADD WITHDRAWAL HISTORY AND CALCULATE TOTAL SUCCESSFUL WITHDRAWALS
                 var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(returningUser.UserName, false);
                 var depositHistory = await _repository.DepositRepository.GetDepositByUserName(returningUser.UserName, false);
-                
-                if(withdrawalHistory != null)
+
+                if (withdrawalHistory != null)
+                {
                     getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
-                
-                if(depositHistory != null)
+                    decimal totalWithdrawal = 0;
+                    foreach (var eachWithdraw in getThisUserFromDb.WithdrawalHistory)
+                    {
+                        if (eachWithdraw.IsSuccess)
+                            totalWithdrawal = totalWithdrawal + eachWithdraw.Amount;
+                    }
+                    getThisUserFromDb.TotalWithdrawal = totalWithdrawal;
+                }
+
+                //ADD DEPOSIT HISTORY AND CALCULATE TOTAL SUCCESSFUL DEPOSITS
+                if (depositHistory != null)
+                {
                     getThisUserFromDb.DepositHistory = depositHistory.ToList();
+                    decimal totalDeposit = 0;
+                    foreach (var eachDeposit in getThisUserFromDb.DepositHistory)
+                    {
+                        if (eachDeposit.IsSuccess)
+                            totalDeposit = totalDeposit + eachDeposit.Amount;
+                    }
+                    getThisUserFromDb.TotalDeposit = totalDeposit;
+                }
 
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",
+                    IsSuccess = false,
                     StatusMessage = "Login successful",
                     UserData = getThisUserFromDb
                 };
@@ -112,6 +139,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "500",
+                    IsSuccess = false,
                     StatusMessage = "Account Not Created"
                 };
             }
@@ -125,6 +153,7 @@ namespace AutoArbs.Infrastructure.Services
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
+                        IsSuccess = false,
                         StatusMessage = "bad input",
                     };
 
@@ -134,6 +163,7 @@ namespace AutoArbs.Infrastructure.Services
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "404",
+                        IsSuccess = false,
                         StatusMessage = "User not found",
                     };
 
@@ -149,6 +179,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",
+                    IsSuccess = true,
                     StatusMessage = "User Found",
                     UserData = getThisUserFromDb
                 };
@@ -159,7 +190,64 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "500",
+                    IsSuccess = false,
                     StatusMessage = "Error while fetching user"
+                };
+            }
+        }
+
+        public async Task<ResponseMessageWithUser> Bonus(BonusDto bonusRequest)
+        {
+            try
+            {
+                if (bonusRequest.Amount < 0)
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "Bonus amount must be greater than zero",
+                    };
+
+                if (bonusRequest.UserList.Count < 0)
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "Enter the list of users entitled to the bonus",
+                    };
+
+                foreach (var eachUser in bonusRequest.UserList)
+                {
+                    //CHECK IF USER EXIST
+                    var getThisUserFromDb = _repository.UserRepository.GetUserByEmailOrUsername(eachUser, true);
+                    if (getThisUserFromDb == null)
+                        return new ResponseMessageWithUser
+                        {
+                            StatusCode = "404",
+                            IsSuccess = false,
+                            StatusMessage = "User not found",
+                        };
+
+                    getThisUserFromDb.Bonus = bonusRequest.Amount;
+                    await _repository.SaveAsync();
+                }
+
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "201",
+                    IsSuccess = true,
+                    StatusMessage = "Bonus added for user(s)",
+                };
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "500",
+                    IsSuccess = false,
+                    StatusMessage = "Error while adding bonus for user"
                 };
             }
         }

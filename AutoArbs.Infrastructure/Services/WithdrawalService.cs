@@ -23,6 +23,7 @@ namespace AutoArbs.Infrastructure.Services
             return new ResponseMessage
             {
                 StatusCode = "400",
+                IsSuccess = false,
                 StatusMessage = message
             };
         }
@@ -55,6 +56,7 @@ namespace AutoArbs.Infrastructure.Services
             return new ResponseMessage
             {
                 StatusCode = "201",
+                IsSuccess = true,
                 StatusMessage = "Withdrawal Initiated"
             };
         }
@@ -65,6 +67,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithdrawal
                 {
                     StatusCode = "400",
+                    IsSuccess = false,
                     StatusMessage = "Kindly enter your username",
                 };
 
@@ -73,6 +76,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithdrawal
                 {
                     StatusCode = "400",
+                    IsSuccess = false,
                     StatusMessage = "Your username is invalid",
                 };
 
@@ -81,6 +85,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithdrawal
                 {
                     StatusCode = "400",
+                    IsSuccess = false,
                     StatusMessage = "Kindly enter your username",
                 };
 
@@ -88,6 +93,7 @@ namespace AutoArbs.Infrastructure.Services
             return new ResponseMessageWithdrawal
             {
                 StatusCode = "200",
+                IsSuccess = true,
                 StatusMessage = "Get Withdrawal History",
                 Data = withdrawalHistories.ToList()
             };
@@ -114,6 +120,7 @@ namespace AutoArbs.Infrastructure.Services
             return new ResponseMessage
             {
                 StatusCode = "",
+                //IsSuccess = false,
                 StatusMessage =""
             };
         }

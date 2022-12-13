@@ -10,6 +10,7 @@ namespace AutoArbs.Domain.Dtos
     public class ResponseMessage
     {
         public string StatusCode { get; set; }
+        public bool IsSuccess { get; set; }
         public string StatusMessage { get; set; }
     }
 
@@ -17,6 +18,7 @@ namespace AutoArbs.Domain.Dtos
     {
         public string StatusCode { get; set; }
         public string StatusMessage { get; set; }
+        public bool IsSuccess { get; set; }
         public User UserData { get; set; }
     }
 }

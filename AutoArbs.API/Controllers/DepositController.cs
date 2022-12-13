@@ -31,5 +31,12 @@ namespace AutoArbs.API.Controllers
             var response = await _serviceManager.DepositService.GetDepositsByUserName(username);
             return Ok(response);
         }
+
+        [HttpGet("Bonus")]
+        public async Task<IActionResult> Bonus(string username)
+        {
+            var response = await _serviceManager.UserService.Bonus(username);
+            return Ok(response);
+        }
     }
 }

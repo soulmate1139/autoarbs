@@ -20,6 +20,7 @@ namespace AutoArbs.Domain.Dtos
     public class ResponseMessageWithdrawal
     {
         public string StatusCode { get; set; }
+        public bool IsSuccess { get; set; }
         public string StatusMessage { get; set; }
         public IEnumerable<Withdrawal> Data { get; set; }
     }

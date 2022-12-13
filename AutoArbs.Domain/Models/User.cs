@@ -17,6 +17,9 @@ namespace AutoArbs.Domain.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public decimal Balance { get; set; }
+        public decimal TotalDeposit { get; set; }
+        public decimal TotalWithdrawal { get; set; }
+        public decimal TotalBonus { get; set; }
         public decimal Bonus { get; set; }
         public bool IsActive { get; set; }
         public IEnumerable<Withdrawal> WithdrawalHistory { get; set; }
