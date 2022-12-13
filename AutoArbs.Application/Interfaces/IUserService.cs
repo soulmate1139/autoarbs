@@ -12,5 +12,6 @@ namespace AutoArbs.Application.Interfaces
     {
         Task<ResponseMessageWithUser> Register(EnrollDto newUser);
         Task<ResponseMessageWithUser> Login(LoginDto returningUser);
+        Task<ResponseMessageWithUser> GetByUsernameOrEmail(string username);
     }
 }

@@ -116,5 +116,52 @@ namespace AutoArbs.Infrastructure.Services
                 };
             }
         }
+
+        public async Task<ResponseMessageWithUser> GetByUsernameOrEmail(string username)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(username))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        StatusMessage = "bad input",
+                    };
+
+                //CHECK IF USER EXIST
+                var getThisUserFromDb = _repository.UserRepository.GetUserByEmailOrUsername(username, false);
+                if (getThisUserFromDb == null)
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "404",
+                        StatusMessage = "User not found",
+                    };
+
+                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
+                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
+
+                if (withdrawalHistory != null)
+                    getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
+
+                if (depositHistory != null)
+                    getThisUserFromDb.DepositHistory = depositHistory.ToList();
+
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "200",
+                    StatusMessage = "User Found",
+                    UserData = getThisUserFromDb
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "500",
+                    StatusMessage = "Error while fetching user"
+                };
+            }
+        }
     }
 }
