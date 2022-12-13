@@ -56,9 +56,9 @@ namespace AutoArbs.Infrastructure.Services
                 user.UserName = newUser.UserName;
                 user.Email = newUser.Email;
                 user.Password = newUser.Password;
-                user.Balance= 0;
-                user.Bonus= 0;
-                user.IsActive=false;
+                user.Balance = 0;
+                user.Bonus = 0;
+                user.IsActive = false;
 
                 _repository.UserRepository.Create(user);
                 await _repository.SaveAsync();
@@ -67,7 +67,7 @@ namespace AutoArbs.Infrastructure.Services
                     StatusCode = "201",
                     IsSuccess = false,
                     StatusMessage = "Account Created",
-                    UserData= user
+                    UserData = user
                 };
             }
             catch (Exception ex)
@@ -192,62 +192,6 @@ namespace AutoArbs.Infrastructure.Services
                     StatusCode = "500",
                     IsSuccess = false,
                     StatusMessage = "Error while fetching user"
-                };
-            }
-        }
-
-        public async Task<ResponseMessageWithUser> Bonus(BonusDto bonusRequest)
-        {
-            try
-            {
-                if (bonusRequest.Amount < 0)
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "400",
-                        IsSuccess = false,
-                        StatusMessage = "Bonus amount must be greater than zero",
-                    };
-
-                if (bonusRequest.UserList.Count < 0)
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "400",
-                        IsSuccess = false,
-                        StatusMessage = "Enter the list of users entitled to the bonus",
-                    };
-
-                foreach (var eachUser in bonusRequest.UserList)
-                {
-                    //CHECK IF USER EXIST
-                    var getThisUserFromDb = _repository.UserRepository.GetUserByEmailOrUsername(eachUser, true);
-                    if (getThisUserFromDb == null)
-                        return new ResponseMessageWithUser
-                        {
-                            StatusCode = "404",
-                            IsSuccess = false,
-                            StatusMessage = "User not found",
-                        };
-
-                    getThisUserFromDb.Bonus = bonusRequest.Amount;
-                    await _repository.SaveAsync();
-                }
-
-                return new ResponseMessageWithUser
-                {
-                    StatusCode = "201",
-                    IsSuccess = true,
-                    StatusMessage = "Bonus added for user(s)",
-                };
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return new ResponseMessageWithUser
-                {
-                    StatusCode = "500",
-                    IsSuccess = false,
-                    StatusMessage = "Error while adding bonus for user"
                 };
             }
         }
