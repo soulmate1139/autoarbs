@@ -12,8 +12,6 @@ namespace AutoArbs.Application.Interfaces
     {
         Task<IEnumerable<User>> GetAllUsers(bool trackChanges);
         User GetUserByEmail(string email, bool trackChanges);
-        User GetUserByUsername(string username, bool trackChanges);
-        User GetUserByEmailOrUsername(string emailOrUsername, bool trackChanges);
         void Create(User user);
         void Update(User user);
     }

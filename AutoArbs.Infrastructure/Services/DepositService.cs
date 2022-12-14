@@ -32,7 +32,7 @@ namespace AutoArbs.Infrastructure.Services
             if (depositDto == null)
                 return DisplayInvalidResponse("Your input is invalid");
 
-            var getUser = _repository.UserRepository.GetUserByUsername(depositDto.UserName, false);
+            var getUser = _repository.UserRepository.GetUserByEmail(depositDto.Email, false);
             if (getUser == null)
                 return DisplayInvalidResponse("Your username is invalid");
 
@@ -41,7 +41,7 @@ namespace AutoArbs.Infrastructure.Services
 
             var deposit = new Deposit();
             deposit.TransactionId= Convert.ToString(Guid.NewGuid());
-            deposit.Deposit_Username= depositDto.UserName.ToLower();
+            deposit.Deposit_Username= depositDto.Email.ToLower();
             deposit.Amount=depositDto.Amount;
             deposit.Method=depositDto.Method;
             deposit.Status="Processing";
@@ -68,7 +68,7 @@ namespace AutoArbs.Infrastructure.Services
                     StatusMessage = "Kindly enter your username",
                 };
 
-            var getUser = _repository.UserRepository.GetUserByUsername(username, false);
+            var getUser = _repository.UserRepository.GetUserByEmail(username, false);
             if (getUser == null)
                 return new ResponseMessageDeposit
                 {
@@ -118,7 +118,7 @@ namespace AutoArbs.Infrastructure.Services
                 foreach (var eachUser in bonusRequest.UserList)
                 {
                     //CHECK IF USER EXIST
-                    var getThisUserFromDb = _repository.UserRepository.GetUserByEmailOrUsername(eachUser, true);
+                    var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(eachUser, true);
                     if (getThisUserFromDb == null)
                         return new ResponseMessageWithUser
                         {

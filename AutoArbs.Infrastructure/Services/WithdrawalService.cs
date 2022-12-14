@@ -32,7 +32,7 @@ namespace AutoArbs.Infrastructure.Services
             if (withdrawalDto == null)
                 return DisplayInvalidResponse("Your input is invalid");
 
-            var getUser = _repository.UserRepository.GetUserByUsername(withdrawalDto.UserName, false);
+            var getUser = _repository.UserRepository.GetUserByEmail(withdrawalDto.Email, false);
             if (getUser == null)
                 return DisplayInvalidResponse("Your username is invalid");
 
@@ -42,7 +42,7 @@ namespace AutoArbs.Infrastructure.Services
             var withdraw = new Withdrawal
             {
                 TransactionId= Convert.ToString(Guid.NewGuid()),
-                Withdrawal_Username= withdrawalDto.UserName.ToLower(),
+                Withdrawal_Username= withdrawalDto.Email.ToLower(),
                 Amount=withdrawalDto.Amount,
                 Method=withdrawalDto.Method,
                 Status="Processing",
@@ -71,7 +71,7 @@ namespace AutoArbs.Infrastructure.Services
                     StatusMessage = "Kindly enter your username",
                 };
 
-            var getUser = _repository.UserRepository.GetUserByUsername(username, false);
+            var getUser = _repository.UserRepository.GetUserByEmail(username, false);
             if (getUser == null)
                 return new ResponseMessageWithdrawal
                 {

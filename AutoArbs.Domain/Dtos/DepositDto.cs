@@ -12,7 +12,7 @@ namespace AutoArbs.Domain.Dtos
     public class DepositDto
     {
         [Required(ErrorMessage = "Username is required")]
-        public string UserName { get; set; }
+        public string Email { get; set; }
 
         [Required(ErrorMessage = "Amount is required")]
         public decimal Amount { get; set; }

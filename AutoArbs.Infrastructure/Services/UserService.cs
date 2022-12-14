@@ -56,7 +56,7 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //CHECK IF USERNAME EXIST
-                var getThisUsernameFromDb = _repository.UserRepository.GetUserByUsername(newUser.UserName, false);
+                var getThisUsernameFromDb = _repository.UserRepository.GetUserByEmail(newUser.Email, false);
                 if (getThisUsernameFromDb != null)
                     return new ResponseMessageWithUser
                     {
@@ -68,7 +68,6 @@ namespace AutoArbs.Infrastructure.Services
                 User user = new User();
                 user.FirstName = newUser.FirstName;
                 user.LastName = newUser.LastName;
-                user.UserName = newUser.UserName;
                 user.Email = newUser.Email;
                 user.Password = newUser.Password;
                 user.Balance = 0;
@@ -102,7 +101,7 @@ namespace AutoArbs.Infrastructure.Services
             try
             {
                 //CHECK IF EMAIL EXIST
-                var getThisUserFromDb = _repository.UserRepository.GetUserByEmailOrUsername(returningUser.UserName, false);
+                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(returningUser.Email, false);
                 if (getThisUserFromDb == null || getThisUserFromDb.Password != returningUser.Password)
                     return new ResponseMessageWithUser
                     {
@@ -112,8 +111,8 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //ADD WITHDRAWAL HISTORY AND CALCULATE TOTAL SUCCESSFUL WITHDRAWALS
-                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(returningUser.UserName, false);
-                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(returningUser.UserName, false);
+                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(returningUser.Email, false);
+                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(returningUser.Email, false);
 
                 if (withdrawalHistory != null)
                 {
@@ -173,7 +172,7 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //CHECK IF USER EXIST
-                var getThisUserFromDb = _repository.UserRepository.GetUserByEmailOrUsername(username, false);
+                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
                 if (getThisUserFromDb == null)
                     return new ResponseMessageWithUser
                     {
@@ -224,7 +223,7 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //CHECK IF USER EXIST
-                var getThisUserFromDb = _repository.UserRepository.GetUserByUsername(username, false);
+                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
                 if (getThisUserFromDb == null)
                     return new ResponseMessageWithUser
                     {

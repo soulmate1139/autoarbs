@@ -15,7 +15,6 @@ namespace AutoArbs.API.Configuration
             {
                 FirstName = "John",
                 LastName = "Doe",
-                UserName = "John1",
                 Email = "john@gmail.com",
                 Password = "John123",
                 Balance= 0,
@@ -26,7 +25,6 @@ namespace AutoArbs.API.Configuration
             {
                 FirstName = "Mary",
                 LastName = "Jane",
-                UserName = "Mary1",
                 Email = "mary@gmail.com",
                 Password = "mary123",
                 Balance= 50,

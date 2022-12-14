@@ -11,7 +11,7 @@ namespace AutoArbs.Domain.Dtos
     public class WithdrawalDto
     {
         [Required(ErrorMessage = "Username is required")]
-        public string UserName { get; set; }
+        public string Email { get; set; }
         public decimal Amount { get; set; }
         public string Method { get; set; }
         public string Account_withdrawn_to { get; set; }
