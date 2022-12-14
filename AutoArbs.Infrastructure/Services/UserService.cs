@@ -267,7 +267,7 @@ namespace AutoArbs.Infrastructure.Services
             try
             {
                 //CHECK IF EMAIL IS VALID
-                if (!EmailIsValid(newUser.Email))
+                if (!EmailIsValid(email))
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
