@@ -15,5 +15,6 @@ namespace AutoArbs.Application.Interfaces
         User GetUserByUsername(string username, bool trackChanges);
         User GetUserByEmailOrUsername(string emailOrUsername, bool trackChanges);
         void Create(User user);
+        void Update(User user);
     }
 }

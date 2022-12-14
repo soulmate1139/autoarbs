@@ -99,7 +99,7 @@ namespace AutoArbs.Infrastructure.Services
         {
             try
             {
-                if (bonusRequest.Amount < 0)
+                if (bonusRequest.Amount < 1)
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
@@ -127,9 +127,10 @@ namespace AutoArbs.Infrastructure.Services
                             StatusMessage = "User not found",
                         };
 
-                    getThisUserFromDb.Bonus = bonusRequest.Amount;
-                    await _repository.SaveAsync();
+                    getThisUserFromDb.Bonus = getThisUserFromDb.Bonus + bonusRequest.Amount;
+                    _repository.UserRepository.Update(getThisUserFromDb);
                 }
+                await _repository.SaveAsync();
 
                 return new ResponseMessageWithUser
                 {

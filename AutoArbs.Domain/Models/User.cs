@@ -10,7 +10,6 @@ namespace AutoArbs.Domain.Models
     public class User
     {
         [Key]
-        [Required]
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

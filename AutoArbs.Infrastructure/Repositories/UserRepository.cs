@@ -19,6 +19,7 @@ namespace AutoArbs.Infrastructure.Repositories
             await FindAll(trackChanges).OrderBy(c => c.UserName).ToListAsync();
 
         public void CreateUser(User user) => Create(user);
+        public void UpdateUser(User user) => Update(user);
 
         public User GetUserByEmail(string email, bool trackChanges) => FindByCondition(x => x.Email.ToLower().Equals(email.ToLower()), trackChanges).FirstOrDefault();
 

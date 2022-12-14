@@ -32,10 +32,10 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("Bonus")]
-        public async Task<IActionResult> Bonus(string username)
+        [HttpPost("Bonus")]
+        public async Task<IActionResult> Bonus(BonusDto request)
         {
-            var response = await _serviceManager.UserService.Bonus(username);
+            var response = await _serviceManager.DepositService.Bonus(request);
             return Ok(response);
         }
     }

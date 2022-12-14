@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AutoArbs.Infrastructure.Services
@@ -17,10 +18,24 @@ namespace AutoArbs.Infrastructure.Services
             _repository = repository;
         }
 
+        public static bool EmailIsValid(string email)
+        {
+            return Regex.IsMatch(email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
+        }
+
         public async Task<ResponseMessageWithUser> Register(EnrollDto newUser)
         {
             try
             {
+                //CHECK IF EMAIL IS VALID
+                if (!EmailIsValid(newUser.Email))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "Email is in bad format",
+                    };
+
                 //CHECK PASSWORD LENGTH
                 if (newUser.Password.Length < 6)
                     return new ResponseMessageWithUser
@@ -195,5 +210,117 @@ namespace AutoArbs.Infrastructure.Services
                 };
             }
         }
+
+        public async Task<ResponseMessageWithUser> GetByUsername(string username)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(username))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "bad input",
+                    };
+
+                //CHECK IF USER EXIST
+                var getThisUserFromDb = _repository.UserRepository.GetUserByUsername(username, false);
+                if (getThisUserFromDb == null)
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "404",
+                        IsSuccess = false,
+                        StatusMessage = "User not found",
+                    };
+
+                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
+                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
+
+                if (withdrawalHistory != null)
+                    getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
+
+                if (depositHistory != null)
+                    getThisUserFromDb.DepositHistory = depositHistory.ToList();
+
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "200",
+                    IsSuccess = true,
+                    StatusMessage = "User Found",
+                    UserData = getThisUserFromDb
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "500",
+                    IsSuccess = false,
+                    StatusMessage = "Error while fetching user"
+                };
+            }
+        }
+
+        public async Task<ResponseMessageWithUser> GetByEmail(string email)
+        {
+            try
+            {
+                //CHECK IF EMAIL IS VALID
+                if (!EmailIsValid(newUser.Email))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "Email is in bad format",
+                    };
+
+                if (string.IsNullOrEmpty(email))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "bad input",
+                    };
+
+                //CHECK IF USER EXIST
+                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(email, false);
+                if (getThisUserFromDb == null)
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "404",
+                        IsSuccess = false,
+                        StatusMessage = "User not found",
+                    };
+
+                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(email, false);
+                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(email, false);
+
+                if (withdrawalHistory != null)
+                    getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
+
+                if (depositHistory != null)
+                    getThisUserFromDb.DepositHistory = depositHistory.ToList();
+
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "200",
+                    IsSuccess = true,
+                    StatusMessage = "User Found",
+                    UserData = getThisUserFromDb
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new ResponseMessageWithUser
+                {
+                    StatusCode = "500",
+                    IsSuccess = false,
+                    StatusMessage = "Error while fetching user"
+                };
+            }
+        }
+
     }
 }

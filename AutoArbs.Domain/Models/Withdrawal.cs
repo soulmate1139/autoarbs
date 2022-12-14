@@ -11,9 +11,7 @@ namespace AutoArbs.Domain.Models
     {
         [Key]
         public string TransactionId { get; set; }
-        [Required(ErrorMessage = "Username is required")]
         public string Withdrawal_Username { get; set; }
-        [Required(ErrorMessage = "Amount is required")]
         public decimal Amount { get; set; }
         public string Method { get; set; }
         public string Account_withdrawn_to { get; set; }
