@@ -11,7 +11,7 @@ namespace AutoArbs.Application.Interfaces
     public interface IWithdrawalRepository
     {
         void CreateWithdrawal(Withdrawal withdrawal);
-        Task<IEnumerable<Withdrawal>> GetWithdrawalByUserName(string userName, bool trackChanges);
+        Task<IEnumerable<Withdrawal>> GetWithdrawalByEmail(string userName, bool trackChanges);
         Withdrawal GetWithdrawalByTransactionId(string transactionId, bool trackChanges);
         void UpdateWithdrawal(Withdrawal withdrawal);
     }

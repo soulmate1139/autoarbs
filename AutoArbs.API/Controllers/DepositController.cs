@@ -26,9 +26,9 @@ namespace AutoArbs.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDepositHistory(string username)
+        public async Task<IActionResult> GetDepositHistory(string email)
         {
-            var response = await _serviceManager.DepositService.GetDepositsByUserName(username);
+            var response = await _serviceManager.DepositService.GetDepositsByEmail(email);
             return Ok(response);
         }
 

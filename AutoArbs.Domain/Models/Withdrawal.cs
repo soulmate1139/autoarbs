@@ -11,7 +11,7 @@ namespace AutoArbs.Domain.Models
     {
         [Key]
         public string TransactionId { get; set; }
-        public string Withdrawal_Username { get; set; }
+        public string Withdrawal_Email { get; set; }
         public decimal Amount { get; set; }
         public string Method { get; set; }
         public string Account_withdrawn_to { get; set; }

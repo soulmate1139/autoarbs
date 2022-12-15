@@ -11,7 +11,7 @@ namespace AutoArbs.Application.Interfaces
     public interface IWithdrawalService
     {
         Task<ResponseMessage> CreateWithdrawal(WithdrawalDto deposit);
-        Task<ResponseMessageWithdrawal> GetWithdrawalsByUserName(string userName);
+        Task<ResponseMessageWithdrawal> GetWithdrawalsByEmail(string userName);
         Task<ResponseMessage> UpdateWithdrawal(UpdateWithdrawalDto deposit);
     }
 }

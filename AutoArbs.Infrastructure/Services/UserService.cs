@@ -55,16 +55,7 @@ namespace AutoArbs.Infrastructure.Services
                         StatusMessage = "Email is not available",
                     };
 
-                //CHECK IF USERNAME EXIST
-                var getThisUsernameFromDb = _repository.UserRepository.GetUserByEmail(newUser.Email, false);
-                if (getThisUsernameFromDb != null)
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "400",
-                        IsSuccess = false,
-                        StatusMessage = "Username is not available",
-                    };
-
+           
                 User user = new User();
                 user.FirstName = newUser.FirstName;
                 user.LastName = newUser.LastName;
@@ -111,8 +102,8 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //ADD WITHDRAWAL HISTORY AND CALCULATE TOTAL SUCCESSFUL WITHDRAWALS
-                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(returningUser.Email, false);
-                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(returningUser.Email, false);
+                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByEmail(returningUser.Email, false);
+                var depositHistory = await _repository.DepositRepository.GetDepositByEmail(returningUser.Email, false);
 
                 if (withdrawalHistory != null)
                 {
@@ -159,107 +150,107 @@ namespace AutoArbs.Infrastructure.Services
             }
         }
 
-        public async Task<ResponseMessageWithUser> GetByUsernameOrEmail(string username)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(username))
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "400",
-                        IsSuccess = false,
-                        StatusMessage = "bad input",
-                    };
+        //public async Task<ResponseMessageWithUser> GetByUsernameOrEmail(string username)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(username))
+        //            return new ResponseMessageWithUser
+        //            {
+        //                StatusCode = "400",
+        //                IsSuccess = false,
+        //                StatusMessage = "bad input",
+        //            };
 
-                //CHECK IF USER EXIST
-                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
-                if (getThisUserFromDb == null)
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "404",
-                        IsSuccess = false,
-                        StatusMessage = "User not found",
-                    };
+        //        //CHECK IF USER EXIST
+        //        var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
+        //        if (getThisUserFromDb == null)
+        //            return new ResponseMessageWithUser
+        //            {
+        //                StatusCode = "404",
+        //                IsSuccess = false,
+        //                StatusMessage = "User not found",
+        //            };
 
-                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
-                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
+        //        var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
+        //        var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
 
-                if (withdrawalHistory != null)
-                    getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
+        //        if (withdrawalHistory != null)
+        //            getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
 
-                if (depositHistory != null)
-                    getThisUserFromDb.DepositHistory = depositHistory.ToList();
+        //        if (depositHistory != null)
+        //            getThisUserFromDb.DepositHistory = depositHistory.ToList();
 
-                return new ResponseMessageWithUser
-                {
-                    StatusCode = "200",
-                    IsSuccess = true,
-                    StatusMessage = "User Found",
-                    UserData = getThisUserFromDb
-                };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return new ResponseMessageWithUser
-                {
-                    StatusCode = "500",
-                    IsSuccess = false,
-                    StatusMessage = "Error while fetching user"
-                };
-            }
-        }
+        //        return new ResponseMessageWithUser
+        //        {
+        //            StatusCode = "200",
+        //            IsSuccess = true,
+        //            StatusMessage = "User Found",
+        //            UserData = getThisUserFromDb
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //        return new ResponseMessageWithUser
+        //        {
+        //            StatusCode = "500",
+        //            IsSuccess = false,
+        //            StatusMessage = "Error while fetching user"
+        //        };
+        //    }
+        //}
 
-        public async Task<ResponseMessageWithUser> GetByUsername(string username)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(username))
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "400",
-                        IsSuccess = false,
-                        StatusMessage = "bad input",
-                    };
+        //public async Task<ResponseMessageWithUser> GetByUsername(string username)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(username))
+        //            return new ResponseMessageWithUser
+        //            {
+        //                StatusCode = "400",
+        //                IsSuccess = false,
+        //                StatusMessage = "bad input",
+        //            };
 
-                //CHECK IF USER EXIST
-                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
-                if (getThisUserFromDb == null)
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "404",
-                        IsSuccess = false,
-                        StatusMessage = "User not found",
-                    };
+        //        //CHECK IF USER EXIST
+        //        var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
+        //        if (getThisUserFromDb == null)
+        //            return new ResponseMessageWithUser
+        //            {
+        //                StatusCode = "404",
+        //                IsSuccess = false,
+        //                StatusMessage = "User not found",
+        //            };
 
-                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
-                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
+        //        var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
+        //        var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
 
-                if (withdrawalHistory != null)
-                    getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
+        //        if (withdrawalHistory != null)
+        //            getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
 
-                if (depositHistory != null)
-                    getThisUserFromDb.DepositHistory = depositHistory.ToList();
+        //        if (depositHistory != null)
+        //            getThisUserFromDb.DepositHistory = depositHistory.ToList();
 
-                return new ResponseMessageWithUser
-                {
-                    StatusCode = "200",
-                    IsSuccess = true,
-                    StatusMessage = "User Found",
-                    UserData = getThisUserFromDb
-                };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return new ResponseMessageWithUser
-                {
-                    StatusCode = "500",
-                    IsSuccess = false,
-                    StatusMessage = "Error while fetching user"
-                };
-            }
-        }
+        //        return new ResponseMessageWithUser
+        //        {
+        //            StatusCode = "200",
+        //            IsSuccess = true,
+        //            StatusMessage = "User Found",
+        //            UserData = getThisUserFromDb
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //        return new ResponseMessageWithUser
+        //        {
+        //            StatusCode = "500",
+        //            IsSuccess = false,
+        //            StatusMessage = "Error while fetching user"
+        //        };
+        //    }
+        //}
 
         public async Task<ResponseMessageWithUser> GetByEmail(string email)
         {
@@ -292,8 +283,8 @@ namespace AutoArbs.Infrastructure.Services
                         StatusMessage = "User not found",
                     };
 
-                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(email, false);
-                var depositHistory = await _repository.DepositRepository.GetDepositByUserName(email, false);
+                var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByEmail(email, false);
+                var depositHistory = await _repository.DepositRepository.GetDepositByEmail(email, false);
 
                 if (withdrawalHistory != null)
                     getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();

@@ -11,7 +11,7 @@ namespace AutoArbs.Domain.Models
     {
         [Key]
         public string TransactionId { get; set; }
-        public string Deposit_Username { get; set; }
+        public string Deposit_Email { get; set; }
         public decimal Amount { get; set; }
         public string Method { get; set; }
         public string Status { get; set; }

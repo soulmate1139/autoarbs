@@ -11,7 +11,7 @@ namespace AutoArbs.Application.Interfaces
     public interface IDepositService
     {
         Task<ResponseMessage> CreateDeposit(DepositDto deposit);
-        Task<ResponseMessageDeposit> GetDepositsByUserName(string username);
+        Task<ResponseMessageDeposit> GetDepositsByEmail(string email);
         Task<ResponseMessage> UpdateDeposit(UpdateDepositDto deposit);
         Task<ResponseMessageWithUser> Bonus(BonusDto bonusRequest);
     }

@@ -33,7 +33,7 @@ namespace AutoArbs.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Deposit_Username")
+                    b.Property<string>("Deposit_Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -51,19 +51,19 @@ namespace AutoArbs.API.Migrations
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserEmail")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("UserName");
+                    b.HasIndex("UserEmail");
 
                     b.ToTable("DepositHistories");
                 });
 
             modelBuilder.Entity("AutoArbs.Domain.Models.User", b =>
                 {
-                    b.Property<string>("UserName")
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Balance")
@@ -71,10 +71,6 @@ namespace AutoArbs.API.Migrations
 
                     b.Property<decimal>("Bonus")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -100,17 +96,16 @@ namespace AutoArbs.API.Migrations
                     b.Property<decimal>("TotalWithdrawal")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("UserName");
+                    b.HasKey("Email");
 
                     b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
-                            UserName = "John1",
+                            Email = "john@gmail.com",
                             Balance = 0m,
                             Bonus = 0m,
-                            Email = "john@gmail.com",
                             FirstName = "John",
                             IsActive = false,
                             LastName = "Doe",
@@ -121,10 +116,9 @@ namespace AutoArbs.API.Migrations
                         },
                         new
                         {
-                            UserName = "Mary1",
+                            Email = "mary@gmail.com",
                             Balance = 50m,
                             Bonus = 0m,
-                            Email = "mary@gmail.com",
                             FirstName = "Mary",
                             IsActive = false,
                             LastName = "Jane",
@@ -164,16 +158,16 @@ namespace AutoArbs.API.Migrations
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserEmail")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Withdrawal_Username")
+                    b.Property<string>("Withdrawal_Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("UserName");
+                    b.HasIndex("UserEmail");
 
                     b.ToTable("WithdrawalHistories");
                 });
@@ -182,14 +176,14 @@ namespace AutoArbs.API.Migrations
                 {
                     b.HasOne("AutoArbs.Domain.Models.User", null)
                         .WithMany("DepositHistory")
-                        .HasForeignKey("UserName");
+                        .HasForeignKey("UserEmail");
                 });
 
             modelBuilder.Entity("AutoArbs.Domain.Models.Withdrawal", b =>
                 {
                     b.HasOne("AutoArbs.Domain.Models.User", null)
                         .WithMany("WithdrawalHistory")
-                        .HasForeignKey("UserName");
+                        .HasForeignKey("UserEmail");
                 });
 
             modelBuilder.Entity("AutoArbs.Domain.Models.User", b =>

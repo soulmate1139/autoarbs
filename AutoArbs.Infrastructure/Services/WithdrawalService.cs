@@ -34,7 +34,7 @@ namespace AutoArbs.Infrastructure.Services
 
             var getUser = _repository.UserRepository.GetUserByEmail(withdrawalDto.Email, false);
             if (getUser == null)
-                return DisplayInvalidResponse("Your username is invalid");
+                return DisplayInvalidResponse("Your email is invalid");
 
             if (string.IsNullOrEmpty(Convert.ToString(withdrawalDto.Amount)) || string.IsNullOrEmpty(withdrawalDto.Method) || string.IsNullOrEmpty(withdrawalDto.Account_withdrawn_to))
                 return DisplayInvalidResponse("Kindly enter all the fields");
@@ -42,7 +42,7 @@ namespace AutoArbs.Infrastructure.Services
             var withdraw = new Withdrawal
             {
                 TransactionId= Convert.ToString(Guid.NewGuid()),
-                Withdrawal_Username= withdrawalDto.Email.ToLower(),
+                Withdrawal_Email= withdrawalDto.Email.ToLower(),
                 Amount=withdrawalDto.Amount,
                 Method=withdrawalDto.Method,
                 Status="Processing",
@@ -61,35 +61,36 @@ namespace AutoArbs.Infrastructure.Services
             };
         }
 
-        public async Task<ResponseMessageWithdrawal> GetWithdrawalsByUserName(string username)
+        public async Task<ResponseMessageWithdrawal> GetWithdrawalsByEmail(string email)
         {
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(email))
                 return new ResponseMessageWithdrawal
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Kindly enter your username",
+                    StatusMessage = "Kindly enter your email",
                 };
 
-            var getUser = _repository.UserRepository.GetUserByEmail(username, false);
+            var getUser = _repository.UserRepository.GetUserByEmail(email, false);
             if (getUser == null)
                 return new ResponseMessageWithdrawal
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Your username is invalid",
+                    StatusMessage = "No user is found",
                 };
 
-            var depositHistories = await _repository.DepositRepository.GetDepositByUserName(username, false);
-            if (depositHistories == null)
+            //var depositHistories = await _repository.DepositRepository.GetDepositByEmail(email, false);
+
+            var withdrawalHistories = await _repository.WithdrawalRepository.GetWithdrawalByEmail(email, false);
+            if (withdrawalHistories == null)
                 return new ResponseMessageWithdrawal
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Kindly enter your username",
+                    StatusMessage = "No history found",
                 };
-
-            var withdrawalHistories = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
+            
             return new ResponseMessageWithdrawal
             {
                 StatusCode = "200",

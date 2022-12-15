@@ -41,7 +41,7 @@ namespace AutoArbs.Infrastructure.Services
 
             var deposit = new Deposit();
             deposit.TransactionId= Convert.ToString(Guid.NewGuid());
-            deposit.Deposit_Username= depositDto.Email.ToLower();
+            deposit.Deposit_Email= depositDto.Email.ToLower();
             deposit.Amount=depositDto.Amount;
             deposit.Method=depositDto.Method;
             deposit.Status="Processing";
@@ -53,37 +53,37 @@ namespace AutoArbs.Infrastructure.Services
             return new ResponseMessage
             {
                 StatusCode = "201",
-                IsSuccess = false,
+                IsSuccess = true,
                 StatusMessage = "Deposit Created"
             };
         }
 
-        public async Task<ResponseMessageDeposit> GetDepositsByUserName(string username)
+        public async Task<ResponseMessageDeposit> GetDepositsByEmail(string email)
         {
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(email))
                 return new ResponseMessageDeposit
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Kindly enter your username",
+                    StatusMessage = "Kindly enter your email",
                 };
 
-            var getUser = _repository.UserRepository.GetUserByEmail(username, false);
+            var getUser = _repository.UserRepository.GetUserByEmail(email, false);
             if (getUser == null)
                 return new ResponseMessageDeposit
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Your username is invalid",
+                    StatusMessage = "No user is found",
                 };
 
-            var depositHistories = await _repository.DepositRepository.GetDepositByUserName(username, false);
+            var depositHistories = await _repository.DepositRepository.GetDepositByEmail(email, false);
             if (depositHistories == null)
                 return new ResponseMessageDeposit
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Kindly enter your username",
+                    StatusMessage = "No history found",
                 };
 
             return new ResponseMessageDeposit

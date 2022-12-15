@@ -28,7 +28,7 @@ namespace AutoArbs.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetWithdrawalHistory(string username)
         {
-            var response = await _serviceManager.WithdrawalService.GetWithdrawalsByUserName(username);
+            var response = await _serviceManager.WithdrawalService.GetWithdrawalsByEmail(username);
             return Ok(response);
         }
     }
