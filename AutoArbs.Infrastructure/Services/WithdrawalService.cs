@@ -39,6 +39,9 @@ namespace AutoArbs.Infrastructure.Services
             if (string.IsNullOrEmpty(Convert.ToString(withdrawalDto.Amount)) || string.IsNullOrEmpty(withdrawalDto.Method) || string.IsNullOrEmpty(withdrawalDto.Account_withdrawn_to))
                 return DisplayInvalidResponse("Kindly enter all the fields");
 
+            if(getUser.Balance < withdrawalDto.Amount)
+                return DisplayInvalidResponse("Account is too low for this transaction, kindly make a deposit and try again later");
+
             var withdraw = new Withdrawal
             {
                 TransactionId= Convert.ToString(Guid.NewGuid()),
