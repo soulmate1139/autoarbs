@@ -37,12 +37,12 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //CHECK PASSWORD LENGTH
-                if (newUser.Password.Length < 6)
+                if (newUser.Password.Length < 8)
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
                         IsSuccess = false,
-                        StatusMessage = "Kindly enter a unique password more than 5 letters",
+                        StatusMessage = "Kindly enter a unique password with a minimum of 8 letters",
                     };
 
                 //CHECK IF EMAIL EXIST
