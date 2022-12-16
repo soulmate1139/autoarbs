@@ -256,6 +256,15 @@ namespace AutoArbs.Infrastructure.Services
         {
             try
             {
+                
+                if (string.IsNullOrEmpty(email))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "bad input",
+                    };
+                
                 //CHECK IF EMAIL IS VALID
                 if (!EmailIsValid(email))
                     return new ResponseMessageWithUser
@@ -265,13 +274,6 @@ namespace AutoArbs.Infrastructure.Services
                         StatusMessage = "Email is in bad format",
                     };
 
-                if (string.IsNullOrEmpty(email))
-                    return new ResponseMessageWithUser
-                    {
-                        StatusCode = "400",
-                        IsSuccess = false,
-                        StatusMessage = "bad input",
-                    };
 
                 //CHECK IF USER EXIST
                 var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(email, false);

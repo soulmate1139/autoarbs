@@ -31,7 +31,11 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
-
-
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUser(string email)
+        {
+            var response = await _serviceManager.UserService.GetByEmail(email);
+            return Ok(response);
+        }
     }
 }
