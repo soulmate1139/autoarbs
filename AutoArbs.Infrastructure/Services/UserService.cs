@@ -95,8 +95,7 @@ namespace AutoArbs.Infrastructure.Services
                 {
                     StatusCode = "201",
                     IsSuccess = false,
-                    StatusMessage = "Account Created",
-                    UserData = user
+                    StatusMessage = "Account Created"
                 };
             }
             catch (Exception ex)
@@ -165,6 +164,8 @@ namespace AutoArbs.Infrastructure.Services
                     getThisUserFromDb.TotalDeposit = totalDeposit;
                 }
 
+                //Remove password
+                getThisUserFromDb.Password = "";
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",
@@ -330,6 +331,8 @@ namespace AutoArbs.Infrastructure.Services
                 if (depositHistory != null)
                     getThisUserFromDb.DepositHistory = depositHistory.ToList();
 
+                //Remove password
+                getThisUserFromDb.Password = "";
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",
