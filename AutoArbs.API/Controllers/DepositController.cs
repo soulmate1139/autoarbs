@@ -21,7 +21,7 @@ namespace AutoArbs.API.Controllers
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
-
+        [AllowAnonymous]
         [HttpPost("create")]
         public async Task<IActionResult> CreateDeposit(DepositDto request)
         {
@@ -33,6 +33,7 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost("get")]
         public async Task<IActionResult> GetDepositHistory(GetDepositDto request)
         {
@@ -44,6 +45,7 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost("bonus")]
         public async Task<IActionResult> Bonus(BonusDto request)
         {

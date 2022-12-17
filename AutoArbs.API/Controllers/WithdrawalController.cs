@@ -21,7 +21,7 @@ namespace AutoArbs.API.Controllers
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
-
+        [AllowAnonymous]
         [HttpPost("create")]
         public async Task<IActionResult> CreateWithdrawal(WithdrawalDto request)
         {
@@ -33,6 +33,7 @@ namespace AutoArbs.API.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost("get")]
         public async Task<IActionResult> GetWithdrawalHistory(GetWithdrawalDto request)
         {

@@ -22,6 +22,7 @@ namespace AutoArbs.API.Controllers
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Enroll(EnrollDto enrollDto)
         {
@@ -41,6 +42,7 @@ namespace AutoArbs.API.Controllers
                 return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost("getuser")]
         public async Task<IActionResult> GetUser(GetUserDto request)
         {
