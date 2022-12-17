@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,6 +24,26 @@ namespace AutoArbs.Infrastructure.Services
         public static bool EmailIsValid(string email)
         {
             return Regex.IsMatch(email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
+        }
+
+        public static string StringHasher(string input)
+        {
+            return ComputeSha256Hash(input);
+        }
+
+        private static string ComputeSha256Hash(string input)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                StringBuilder builder = new StringBuilder();
+                for(int i=0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
 
         public async Task<ResponseMessageWithUser> Register(EnrollDto newUser)
@@ -57,12 +78,13 @@ namespace AutoArbs.Infrastructure.Services
                         StatusMessage = "Email is not available",
                     };
 
+                var hashedPassword = StringHasher(newUser.Password);
            
                 User user = new User();
                 user.FirstName = newUser.FirstName;
                 user.LastName = newUser.LastName;
                 user.Email = newUser.Email;
-                user.Password = newUser.Password;
+                user.Password = hashedPassword;
                 user.Balance = 0;
                 user.Bonus = 0;
                 user.IsActive = false;
@@ -105,7 +127,8 @@ namespace AutoArbs.Infrastructure.Services
 
                 //CHECK IF EMAIL EXIST
                 var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(returningUser.Email, false);
-                if (getThisUserFromDb == null || getThisUserFromDb.Password != returningUser.Password)
+                var hashedPassword = StringHasher(returningUser.Password);
+                if (getThisUserFromDb == null || getThisUserFromDb.Password != hashedPassword)
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
