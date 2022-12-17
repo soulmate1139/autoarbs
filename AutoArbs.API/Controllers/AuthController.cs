@@ -1,20 +1,25 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
 using AutoArbs.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace AutoArbs.API.Controllers
 {
+    [Authorize]
     [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
+        private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public AuthController(IServiceManager serviceManager)
+        public AuthController(IServiceManager serviceManager, IJwtAuthenticationManager jwtAuthenticationManager)
         {
             _serviceManager=serviceManager;
+            _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
         [HttpPost("register")]
@@ -23,18 +28,27 @@ namespace AutoArbs.API.Controllers
             var response = await _serviceManager.UserService.Register(enrollDto);
             return Ok(response);
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> SignIn(LoginDto returningUser)
         {
-            var response = await _serviceManager.UserService.Login(returningUser);
-            return Ok(response);
+            var token = _jwtAuthenticationManager.GenerateTokem(returningUser.Email);
+            if (token == null)
+                return Unauthorized();
+            
+            var response = await _serviceManager.UserService.Login(returningUser, token);
+                return Ok(response);
         }
 
-        [HttpGet("GetUser")]
-        public async Task<IActionResult> GetUser(string email)
+        [HttpPost("getuser")]
+        public async Task<IActionResult> GetUser(GetUserDto request)
         {
-            var response = await _serviceManager.UserService.GetByEmail(email);
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+            if (!IsTokenValid)
+                return Unauthorized();
+
+            var response = await _serviceManager.UserService.GetByEmail(request.Email);
             return Ok(response);
         }
     }

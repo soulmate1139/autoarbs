@@ -1,50 +1,30 @@
 using AutoArbs.API.Extensions;
+using AutoArbs.Application.Interfaces;
+using AutoArbs.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Services.AddCors(o =>
-//{
-//    o.AddPolicy("AllowOrigin", builder =>
-//    builder.AllowAnyOrigin()
-//    .AllowAnyHeader()
-//    .AllowAnyMethod());
-//});
+builder.Services.AddControllers();
 
+builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.ConfigureAuthenticationService(builder.Configuration);
 
-builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
+builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureDatabaseContext(builder.Configuration);
 
-
-
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureCors();
 
-//builder.Services.AddCors(setup =>
-//{
-//    setup.AddDefaultPolicy(policyBuilder =>
-//    {
-//        //policyBuilder.WithOrigins("");
-//        policyBuilder.AllowAnyOrigin();
-//    });
-//});
 
 var app = builder.Build();
 
-
-//app.UseCors(builder =>
-//{
-//    builder
-//    .AllowAnyOrigin()
-//    .AllowAnyMethod()
-//    .AllowAnyHeader();
-//});
-//app.UseCors("AllowOrigin");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -58,6 +38,7 @@ app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 
 //app.UseCors();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

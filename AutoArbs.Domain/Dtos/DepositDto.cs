@@ -11,9 +11,16 @@ namespace AutoArbs.Domain.Dtos
 
     public class DepositDto
     {
+        public string Token { get; set; }
         public string Email { get; set; }
         public decimal Amount { get; set; }
         public string Method { get; set; }
+    }
+
+    public class GetDepositDto
+    {
+        public string Token { get; set; }
+        public string Email { get; set; }
     }
 
     public class UpdateDepositDto

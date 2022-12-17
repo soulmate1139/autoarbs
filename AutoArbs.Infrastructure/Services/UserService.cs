@@ -4,6 +4,7 @@ using AutoArbs.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace AutoArbs.Infrastructure.Services
     internal class UserService : IUserService
     {
         private readonly IRepositoryManager _repository;
+
         public UserService(IRepositoryManager repository)
         {
             _repository = repository;
@@ -87,10 +89,20 @@ namespace AutoArbs.Infrastructure.Services
             }
         }
 
-        public async Task<ResponseMessageWithUser> Login(LoginDto returningUser)
+        
+        public async Task<ResponseMessageWithUser> Login(LoginDto returningUser, string token)
         {
             try
             {
+                //CHECK IF EMAIL IS VALID
+                if (!EmailIsValid(returningUser.Email))
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "Email is in bad format",
+                    };
+
                 //CHECK IF EMAIL EXIST
                 var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(returningUser.Email, false);
                 if (getThisUserFromDb == null || getThisUserFromDb.Password != returningUser.Password)
@@ -133,8 +145,9 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",
-                    IsSuccess = false,
+                    IsSuccess = true,
                     StatusMessage = "Login successful",
+                    Token = token,
                     UserData = getThisUserFromDb
                 };
             }
@@ -145,7 +158,7 @@ namespace AutoArbs.Infrastructure.Services
                 {
                     StatusCode = "500",
                     IsSuccess = false,
-                    StatusMessage = "Account Not Created"
+                    StatusMessage = "Login Failed"
                 };
             }
         }

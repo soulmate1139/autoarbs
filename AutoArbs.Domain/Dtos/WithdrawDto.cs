@@ -10,10 +10,17 @@ namespace AutoArbs.Domain.Dtos
 {
     public class WithdrawalDto
     {
+        public string Token { get; set; }
         public string Email { get; set; }
         public decimal Amount { get; set; }
         public string Method { get; set; }
         public string Account_withdrawn_to { get; set; }
+    }
+
+    public class GetWithdrawalDto
+    {
+        public string Token { get; set; }
+        public string Email { get; set; }
     }
 
     public class ResponseMessageWithdrawal
