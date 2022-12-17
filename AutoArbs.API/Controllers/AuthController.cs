@@ -42,16 +42,16 @@ namespace AutoArbs.API.Controllers
                 return Ok(response);
         }
 
-        [AllowAnonymous]
-        [HttpPost("getuser")]
-        public async Task<IActionResult> GetUser(GetUserDto request)
-        {
-            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            if (!IsTokenValid)
-                return Unauthorized();
+        //[AllowAnonymous]
+        //[HttpPost("getuser")]
+        //public async Task<IActionResult> GetUser(GetUserDto request)
+        //{
+        //    var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+        //    if (!IsTokenValid)
+        //        return Unauthorized();
 
-            var response = await _serviceManager.UserService.GetByEmail(request.Email);
-            return Ok(response);
-        }
+        //    var response = await _serviceManager.UserService.GetByEmail(request.Email);
+        //    return Ok(response);
+        //}
     }
 }
