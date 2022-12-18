@@ -91,11 +91,13 @@ namespace AutoArbs.Infrastructure.Services
 
                 _repository.UserRepository.Create(user);
                 await _repository.SaveAsync();
+                user.Password = "";
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "201",
                     IsSuccess = false,
-                    StatusMessage = "Account Created"
+                    StatusMessage = "Account Created",
+                    UserData = user
                 };
             }
             catch (Exception ex)
