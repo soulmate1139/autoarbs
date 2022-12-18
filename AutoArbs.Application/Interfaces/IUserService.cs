@@ -10,7 +10,7 @@ namespace AutoArbs.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<ResponseMessageWithUser> Register(EnrollDto newUser);
+        Task<ResponseMessageWithUser> Register(EnrollDto newUser, string token);
         Task<ResponseMessageWithUser> Login(LoginDto returningUser, string token);
         Task<ResponseMessageWithUser> GetByEmail(string email);
     }

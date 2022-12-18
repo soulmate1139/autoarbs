@@ -46,7 +46,7 @@ namespace AutoArbs.Infrastructure.Services
             }
         }
 
-        public async Task<ResponseMessageWithUser> Register(EnrollDto newUser)
+        public async Task<ResponseMessageWithUser> Register(EnrollDto newUser, string token)
         {
             try
             {
@@ -96,6 +96,7 @@ namespace AutoArbs.Infrastructure.Services
                 {
                     StatusCode = "201",
                     IsSuccess = false,
+                    Token = token,
                     StatusMessage = "Account Created",
                     UserData = user
                 };

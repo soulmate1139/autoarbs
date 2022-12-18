@@ -26,7 +26,11 @@ namespace AutoArbs.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Enroll(EnrollDto enrollDto)
         {
-            var response = await _serviceManager.UserService.Register(enrollDto);
+            var token = _jwtAuthenticationManager.GenerateTokem(enrollDto.Email);
+            if (token == null)
+                return Unauthorized();
+
+            var response = await _serviceManager.UserService.Register(enrollDto, token);
             return Ok(response);
         }
         
