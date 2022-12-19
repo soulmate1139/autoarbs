@@ -95,7 +95,7 @@ namespace AutoArbs.Infrastructure.Services
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "201",
-                    IsSuccess = false,
+                    IsSuccess = true,
                     Token = token,
                     StatusMessage = "Account Created",
                     UserData = user
@@ -292,7 +292,7 @@ namespace AutoArbs.Infrastructure.Services
         //    }
         //}
 
-        public async Task<ResponseMessageWithUser> GetByEmail(string email)
+        public async Task<ResponseMessageWithUser> GetByEmail(string email, bool isTokenPassed)
         {
             try
             {
@@ -336,6 +336,10 @@ namespace AutoArbs.Infrastructure.Services
 
                 //Remove password
                 getThisUserFromDb.Password = "";
+                if (!isTokenPassed)
+                {
+                    getThisUserFromDb = null;
+                }
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",

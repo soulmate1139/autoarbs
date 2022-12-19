@@ -1,27 +1,48 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoArbs.API.Controllers
 {
+    [Authorize]
     [Route("api/User")]
     [ApiController]
     public class GetUserController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
+        private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public GetUserController(IServiceManager serviceManager)
+        public GetUserController(IServiceManager serviceManager, IJwtAuthenticationManager jwtAuthenticationManager)
         {
             _serviceManager = serviceManager;
+            _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUser(string email)
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> GetUser(GetUserDto request)
         {
-            var response = await _serviceManager.UserService.GetByEmail(email);
+            var isTokenPassed = false;
+            if (!string.IsNullOrEmpty(request.Token))
+            {
+                var token = _jwtAuthenticationManager.GenerateTokem(request.Token);
+                if (token != null)
+                    isTokenPassed = true;
+            }
+
+            var response = await _serviceManager.UserService.GetByEmail(request.Email, isTokenPassed);
             
             return Ok(response);
         }
+
+        //[HttpGet("Email")]
+        //public async Task<IActionResult> GetUser(string email)
+        //{
+        //    var response = await _serviceManager.UserService.GetByEmail(email, false);
+
+        //    return Ok(response);
+        //}
     }
 }
