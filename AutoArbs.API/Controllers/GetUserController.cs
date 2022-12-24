@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutoArbs.API.Controllers
 {
     [Authorize]
-    [Route("api/User")]
+    [Route("api/user")]
     [ApiController]
     public class GetUserController : ControllerBase
     {
@@ -27,9 +27,10 @@ namespace AutoArbs.API.Controllers
             var isTokenPassed = false;
             if (!string.IsNullOrEmpty(request.Token))
             {
-                var token = _jwtAuthenticationManager.GenerateTokem(request.Token);
-                if (token != null)
-                    isTokenPassed = true;
+                var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+                if (!IsTokenValid)
+                    return Ok(_serviceManager.UserService.UnAuthorized());
+                isTokenPassed = true;
             }
 
             var response = await _serviceManager.UserService.GetByEmail(request.Email, isTokenPassed);

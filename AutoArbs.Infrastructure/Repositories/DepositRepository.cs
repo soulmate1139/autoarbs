@@ -17,8 +17,8 @@ namespace AutoArbs.Infrastructure.Repositories
 
         public void CreateDeposit(Deposit deposit) => Create(deposit);
 
-        public async Task<IEnumerable<Deposit>> GetDepositByEmail(string email, bool trackChanges) => await FindAll(trackChanges).Where(c => c.Deposit_Email == email).ToListAsync();
-        public Deposit GetDepositByTransactionId(string transactionId, bool trackChanges) => FindByCondition(x => x.TransactionId.Equals(transactionId), trackChanges).FirstOrDefault();
+        public async Task<IEnumerable<Deposit>> GetDepositByEmail(string email, bool trackChanges) => await FindAll(trackChanges).Where(c => c.Deposit_Email.ToLower() == email.ToLower()).OrderBy(c => c.CreatedAt).ToListAsync();
+        public Deposit GetDepositByTransactionId(string transactionId, bool trackChanges) => FindByCondition(x => x.TransactionId.ToLower().Equals(transactionId.ToLower()), trackChanges).FirstOrDefault();
         public void UpdateDeposit(Deposit deposit) => Update(deposit);
     }
 }

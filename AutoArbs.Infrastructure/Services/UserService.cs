@@ -21,37 +21,13 @@ namespace AutoArbs.Infrastructure.Services
             _repository = repository;
         }
 
-        public static bool EmailIsValid(string email)
-        {
-            return Regex.IsMatch(email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
-        }
-
-        public static string StringHasher(string input)
-        {
-            return ComputeSha256Hash(input);
-        }
-
-        private static string ComputeSha256Hash(string input)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-                StringBuilder builder = new StringBuilder();
-                for(int i=0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-
+       
         public async Task<ResponseMessageWithUser> Register(EnrollDto newUser, string token)
         {
             try
             {
                 //CHECK IF EMAIL IS VALID
-                if (!EmailIsValid(newUser.Email))
+                if (!Util.EmailIsValid(newUser.Email))
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
@@ -78,7 +54,7 @@ namespace AutoArbs.Infrastructure.Services
                         StatusMessage = "Email is not available",
                     };
 
-                var hashedPassword = StringHasher(newUser.Password);
+                var hashedPassword = Util.StringHasher(newUser.Password);
            
                 User user = new User();
                 user.FirstName = newUser.FirstName;
@@ -88,6 +64,7 @@ namespace AutoArbs.Infrastructure.Services
                 user.Balance = 0;
                 user.Bonus = 0;
                 user.IsActive = false;
+                user.CreatedAt = DateTime.UtcNow;
 
                 _repository.UserRepository.Create(user);
                 await _repository.SaveAsync();
@@ -112,14 +89,13 @@ namespace AutoArbs.Infrastructure.Services
                 };
             }
         }
-
         
         public async Task<ResponseMessageWithUser> Login(LoginDto returningUser, string token)
         {
             try
             {
                 //CHECK IF EMAIL IS VALID
-                if (!EmailIsValid(returningUser.Email))
+                if (!Util.EmailIsValid(returningUser.Email))
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
@@ -128,14 +104,23 @@ namespace AutoArbs.Infrastructure.Services
                     };
 
                 //CHECK IF EMAIL EXIST
-                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(returningUser.Email, false);
-                var hashedPassword = StringHasher(returningUser.Password);
+                var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(returningUser.Email, true);
+                var hashedPassword = Util.StringHasher(returningUser.Password);
                 if (getThisUserFromDb == null || getThisUserFromDb.Password != hashedPassword)
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
                         IsSuccess = false,
                         StatusMessage = "Login information is incorrect",
+                    };
+
+                //CHECK IF USER AS VERIFIED EMAIL
+                if(getThisUserFromDb.IsActive == false)
+                    return new ResponseMessageWithUser
+                    {
+                        StatusCode = "400",
+                        IsSuccess = false,
+                        StatusMessage = "Kindly verify your email before proceeding to login",
                     };
 
                 //ADD WITHDRAWAL HISTORY AND CALCULATE TOTAL SUCCESSFUL WITHDRAWALS
@@ -169,6 +154,9 @@ namespace AutoArbs.Infrastructure.Services
 
                 //Remove password
                 getThisUserFromDb.Password = "";
+                getThisUserFromDb.LastLogin = DateTime.UtcNow;
+                _repository.UserRepository.Update(getThisUserFromDb);
+
                 return new ResponseMessageWithUser
                 {
                     StatusCode = "200",
@@ -190,108 +178,6 @@ namespace AutoArbs.Infrastructure.Services
             }
         }
 
-        //public async Task<ResponseMessageWithUser> GetByUsernameOrEmail(string username)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(username))
-        //            return new ResponseMessageWithUser
-        //            {
-        //                StatusCode = "400",
-        //                IsSuccess = false,
-        //                StatusMessage = "bad input",
-        //            };
-
-        //        //CHECK IF USER EXIST
-        //        var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
-        //        if (getThisUserFromDb == null)
-        //            return new ResponseMessageWithUser
-        //            {
-        //                StatusCode = "404",
-        //                IsSuccess = false,
-        //                StatusMessage = "User not found",
-        //            };
-
-        //        var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
-        //        var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
-
-        //        if (withdrawalHistory != null)
-        //            getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
-
-        //        if (depositHistory != null)
-        //            getThisUserFromDb.DepositHistory = depositHistory.ToList();
-
-        //        return new ResponseMessageWithUser
-        //        {
-        //            StatusCode = "200",
-        //            IsSuccess = true,
-        //            StatusMessage = "User Found",
-        //            UserData = getThisUserFromDb
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex);
-        //        return new ResponseMessageWithUser
-        //        {
-        //            StatusCode = "500",
-        //            IsSuccess = false,
-        //            StatusMessage = "Error while fetching user"
-        //        };
-        //    }
-        //}
-
-        //public async Task<ResponseMessageWithUser> GetByUsername(string username)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(username))
-        //            return new ResponseMessageWithUser
-        //            {
-        //                StatusCode = "400",
-        //                IsSuccess = false,
-        //                StatusMessage = "bad input",
-        //            };
-
-        //        //CHECK IF USER EXIST
-        //        var getThisUserFromDb = _repository.UserRepository.GetUserByEmail(username, false);
-        //        if (getThisUserFromDb == null)
-        //            return new ResponseMessageWithUser
-        //            {
-        //                StatusCode = "404",
-        //                IsSuccess = false,
-        //                StatusMessage = "User not found",
-        //            };
-
-        //        var withdrawalHistory = await _repository.WithdrawalRepository.GetWithdrawalByUserName(username, false);
-        //        var depositHistory = await _repository.DepositRepository.GetDepositByUserName(username, false);
-
-        //        if (withdrawalHistory != null)
-        //            getThisUserFromDb.WithdrawalHistory = withdrawalHistory.ToList();
-
-        //        if (depositHistory != null)
-        //            getThisUserFromDb.DepositHistory = depositHistory.ToList();
-
-        //        return new ResponseMessageWithUser
-        //        {
-        //            StatusCode = "200",
-        //            IsSuccess = true,
-        //            StatusMessage = "User Found",
-        //            UserData = getThisUserFromDb
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex);
-        //        return new ResponseMessageWithUser
-        //        {
-        //            StatusCode = "500",
-        //            IsSuccess = false,
-        //            StatusMessage = "Error while fetching user"
-        //        };
-        //    }
-        //}
-
         public async Task<ResponseMessageWithUser> GetByEmail(string email, bool isTokenPassed)
         {
             try
@@ -306,7 +192,7 @@ namespace AutoArbs.Infrastructure.Services
                     };
                 
                 //CHECK IF EMAIL IS VALID
-                if (!EmailIsValid(email))
+                if (!Util.EmailIsValid(email))
                     return new ResponseMessageWithUser
                     {
                         StatusCode = "400",
@@ -360,5 +246,14 @@ namespace AutoArbs.Infrastructure.Services
             }
         }
 
+        public ResponseMessage UnAuthorized()
+        {
+            return new ResponseMessage
+            {
+                StatusCode = "404",
+                StatusMessage = "Invalid status",
+                IsSuccess = false
+            };
+        }
     }
 }

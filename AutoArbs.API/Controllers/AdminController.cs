@@ -1,6 +1,5 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
-using AutoArbs.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,40 +7,40 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutoArbs.API.Controllers
 {
     [Authorize]
-    [Route("api/withdraw")]
+    [Route("api/admin")]
     [ApiController]
-    public class WithdrawalController : ControllerBase
+    public class AdminController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public WithdrawalController(IServiceManager serviceManager, IJwtAuthenticationManager jwtAuthenticationManager)
+        public AdminController(IServiceManager serviceManager, IJwtAuthenticationManager jwtAuthenticationManager)
         {
-            _serviceManager=serviceManager;
+            _serviceManager = serviceManager;
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
         [AllowAnonymous]
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateWithdrawal(WithdrawalDto request)
+        [HttpPost("updatewithdrawal")]
+        public async Task<IActionResult> UpdateWithdrawal(UpdateWithdrawalRequestDto request)
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
                 return Ok(_serviceManager.UserService.UnAuthorized());
 
-            var response = await _serviceManager.WithdrawalService.CreateWithdrawal(request);
+            var response = await _serviceManager.WithdrawalService.UpdateWithdrawal(request);
             return Ok(response);
         }
 
         [AllowAnonymous]
-        [HttpPost("get")]
-        public async Task<IActionResult> GetWithdrawalHistory(GetWithdrawalDto request)
+        [HttpPost("updatedeposit")]
+        public async Task<IActionResult> CreateDeposit(UpdateDepositRequestDto request)
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
                 return Ok(_serviceManager.UserService.UnAuthorized());
 
-            var response = await _serviceManager.WithdrawalService.GetWithdrawalsByEmail(request.Email);
+            var response = await _serviceManager.DepositService.UpdateDeposit(request);
             return Ok(response);
         }
     }

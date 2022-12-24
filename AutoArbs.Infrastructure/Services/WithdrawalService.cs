@@ -18,16 +18,16 @@ namespace AutoArbs.Infrastructure.Services
             _repository = repository;
         }
 
-        private static ResponseMessage DisplayInvalidResponse(string message)
+        private static ResponseMessageWithRefId DisplayInvalidResponse(string message)
         {
-            return new ResponseMessage
+            return new ResponseMessageWithRefId
             {
                 StatusCode = "400",
                 IsSuccess = false,
                 StatusMessage = message
             };
         }
-        public async Task<ResponseMessage> CreateWithdrawal(WithdrawalDto withdrawalDto)
+        public async Task<ResponseMessageWithRefId> CreateWithdrawal(WithdrawalDto withdrawalDto)
         {
             if (withdrawalDto == null)
                 return DisplayInvalidResponse("Your input is invalid");
@@ -39,27 +39,51 @@ namespace AutoArbs.Infrastructure.Services
             if (string.IsNullOrEmpty(Convert.ToString(withdrawalDto.Amount)) || string.IsNullOrEmpty(withdrawalDto.Method) || string.IsNullOrEmpty(withdrawalDto.Account_withdrawn_to))
                 return DisplayInvalidResponse("Kindly enter all the fields");
 
-            if(getUser.Balance < withdrawalDto.Amount)
+            if (getUser.Balance < withdrawalDto.Amount)
                 return DisplayInvalidResponse("Account is too low for this transaction, kindly make a deposit and try again later");
+
+            string otpId = Convert.ToString(Guid.NewGuid());
 
             var withdraw = new Withdrawal
             {
-                TransactionId= Convert.ToString(Guid.NewGuid()),
+                TransactionId= otpId,
                 Withdrawal_Email= withdrawalDto.Email.ToLower(),
                 Amount=withdrawalDto.Amount,
                 Method=withdrawalDto.Method,
-                Status="Processing",
+                Status="not_verified",
                 IsSuccess=false,
                 Account_withdrawn_to=withdrawalDto.Account_withdrawn_to,
                 CreatedAt= DateTime.UtcNow
             };
+
+            var code = Util.GenerateOtp();
+            var newOtp = new Otp
+            {
+                OtpId = otpId,
+                Email = withdrawalDto.Email,
+                Action = "2",
+                CreatedAt = DateTime.UtcNow,
+                Code = Util.StringHasher(code)
+            };
+            _repository.OtpRepository.CreateOtp(newOtp);
+
+            var isSendSuccessful = Util.SendEmail("2", code, withdrawalDto.Email);
+            if (!isSendSuccessful)
+                return new ResponseMessageWithRefId
+                {
+                    StatusCode = "500",
+                    IsSuccess = false,
+                    StatusMessage = "Error, Otp not sent"
+                    
+                };
             _repository.WithdrawalRepository.CreateWithdrawal(withdraw);
             await _repository.SaveAsync();
             
-            return new ResponseMessage
+            return new ResponseMessageWithRefId
             {
                 StatusCode = "201",
                 IsSuccess = true,
+                ReferenceId = otpId,
                 StatusMessage = "Withdrawal Initiated"
             };
         }
@@ -112,20 +136,58 @@ namespace AutoArbs.Infrastructure.Services
         /// </summary>
         /// <param name="withdrawalDto"></param>
         /// <returns></returns>
-        public async Task<ResponseMessage> UpdateWithdrawal(UpdateWithdrawalDto withdrawalDto)
+        public async Task<ResponseMessage> UpdateWithdrawal(UpdateWithdrawalRequestDto request)
         {
-            var getWithdrawal = _repository.WithdrawalRepository.GetWithdrawalByTransactionId(withdrawalDto.TransactionId, true);
-            getWithdrawal.Status = withdrawalDto.Status;
-            getWithdrawal.IsSuccess=withdrawalDto.IsSuccess;
-            getWithdrawal.UpdateAt= DateTime.UtcNow;
+            if (request.Status.ToLower() != "processing" && request.Status.ToLower() != "successful" && request.Status.ToLower() != "denied")
+                return new ResponseMessage
+                {
+                    StatusCode = "404",
+                    StatusMessage = "Invalid status",
+                    IsSuccess = false
+                };
+            var getWithdrawal = _repository.WithdrawalRepository.GetWithdrawalByTransactionId(request.TransactionId, true);
+            if (getWithdrawal == null)
+                return new ResponseMessage
+                {
+                    StatusCode = "404",
+                    StatusMessage = "Transaction not found",
+                    IsSuccess = false
+                };
+            if(getWithdrawal.Status != "processing")
+                return new ResponseMessage
+                {
+                    StatusCode = "400",
+                    StatusMessage = "User need to verify this transaction before any update can be performed",
+                    IsSuccess = false
+                };
+
+            getWithdrawal.Status = request.Status;
+            getWithdrawal.IsSuccess=true;
+            getWithdrawal.UpdatedAt= DateTime.UtcNow;
+
+            //UPDATE BALANCE BEGIN
+            var getUserFromDb = _repository.UserRepository.GetUserByEmail(getWithdrawal.Withdrawal_Email, true);
+            var currentBalance = Util.UpdateBalance("withdraw", getUserFromDb, getWithdrawal.Amount);
+            if(currentBalance < 0)
+                return new ResponseMessage
+                {
+                    StatusCode = "400",
+                    StatusMessage = "Your balance is too low for this transaction",
+                    IsSuccess = false
+                };
+            getUserFromDb.Balance = currentBalance;
+            getUserFromDb.TotalWithdrawal = getUserFromDb.TotalWithdrawal + getWithdrawal.Amount;
+            getUserFromDb.UpdatedAt = DateTime.UtcNow;
+            _repository.UserRepository.Update(getUserFromDb);
+            //UPDATE BALANCE END
 
             _repository.WithdrawalRepository.UpdateWithdrawal(getWithdrawal);
             await _repository.SaveAsync();
             return new ResponseMessage
             {
-                StatusCode = "",
-                //IsSuccess = false,
-                StatusMessage =""
+                StatusCode = "200",
+                IsSuccess = true,
+                StatusMessage ="Update Successful"
             };
         }
     }

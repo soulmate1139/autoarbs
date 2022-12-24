@@ -14,6 +14,14 @@ namespace AutoArbs.Domain.Dtos
         public string StatusMessage { get; set; }
     }
 
+    public class ResponseMessageWithRefId
+    {
+        public string StatusCode { get; set; }
+        public bool IsSuccess { get; set; }
+        public string StatusMessage { get; set; }
+        public string ReferenceId { get; set; }
+    }
+
     public class ResponseMessageWithUser
     {
         public string StatusCode { get; set; }
@@ -21,5 +29,13 @@ namespace AutoArbs.Domain.Dtos
         public bool IsSuccess { get; set; }
         public string Token { get; set; }
         public User UserData { get; set; }
+    }
+
+    public class ResponseMessageWithOtp
+    {
+        public string StatusCode { get; set; }
+        public bool IsSuccess { get; set; }
+        public string ReferenceId { get; set; }
+        public string StatusMessage { get; set; }
     }
 }

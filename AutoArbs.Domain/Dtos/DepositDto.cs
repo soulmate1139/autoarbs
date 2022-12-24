@@ -23,6 +23,13 @@ namespace AutoArbs.Domain.Dtos
         public string Email { get; set; }
     }
 
+    public class UpdateDepositRequestDto
+    {
+        public string Token { get; set; }
+        public string TransactionId { get; set; }
+        public string Status { get; set; }
+    }
+
     public class UpdateDepositDto
     {
         public string TransactionId { get; set; }

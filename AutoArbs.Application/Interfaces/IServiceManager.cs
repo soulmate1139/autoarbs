@@ -5,5 +5,6 @@
         IUserService UserService { get; }
         IDepositService DepositService { get; }
         IWithdrawalService WithdrawalService { get; }
+        IVerifyService VerifyService { get; }
     }
 }

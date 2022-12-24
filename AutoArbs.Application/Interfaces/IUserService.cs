@@ -13,5 +13,6 @@ namespace AutoArbs.Application.Interfaces
         Task<ResponseMessageWithUser> Register(EnrollDto newUser, string token);
         Task<ResponseMessageWithUser> Login(LoginDto returningUser, string token);
         Task<ResponseMessageWithUser> GetByEmail(string email, bool isTokenPassed);
+        ResponseMessage UnAuthorized();
     }
 }

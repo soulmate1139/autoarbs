@@ -11,6 +11,7 @@ namespace AutoArbs.Application.Interfaces
         IUserRepository UserRepository { get; }
         IDepositRepository DepositRepository { get; }
         IWithdrawalRepository WithdrawalRepository { get; }
+        IOtpRepository OtpRepository{ get; }
         Task SaveAsync();
     }
 }

@@ -10,9 +10,9 @@ namespace AutoArbs.Application.Interfaces
 {
     public interface IDepositService
     {
-        Task<ResponseMessage> CreateDeposit(DepositDto deposit);
+        Task<ResponseMessageWithRefId> CreateDeposit(DepositDto deposit);
         Task<ResponseMessageDeposit> GetDepositsByEmail(string email);
-        Task<ResponseMessage> UpdateDeposit(UpdateDepositDto deposit);
+        Task<ResponseMessage> UpdateDeposit(UpdateDepositRequestDto deposit);
         Task<ResponseMessageWithUser> Bonus(BonusDto bonusRequest);
     }
 }

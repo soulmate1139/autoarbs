@@ -1,47 +1,49 @@
 ﻿using AutoArbs.Application.Interfaces;
 using AutoArbs.Domain.Dtos;
-using AutoArbs.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Net.Mail;
 
 namespace AutoArbs.API.Controllers
 {
     [Authorize]
-    [Route("api/withdraw")]
+    [Route("api/verify")]
     [ApiController]
-    public class WithdrawalController : ControllerBase
+    public class VerifyController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public WithdrawalController(IServiceManager serviceManager, IJwtAuthenticationManager jwtAuthenticationManager)
+        public VerifyController(IServiceManager serviceManager, IJwtAuthenticationManager jwtAuthenticationManager)
         {
-            _serviceManager=serviceManager;
+            _serviceManager = serviceManager;
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
-
         [AllowAnonymous]
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateWithdrawal(WithdrawalDto request)
+        [HttpPost("sendotp")]
+        public async Task<IActionResult> Enroll(SendOtpDto request)
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
                 return Ok(_serviceManager.UserService.UnAuthorized());
 
-            var response = await _serviceManager.WithdrawalService.CreateWithdrawal(request);
+            var response = await _serviceManager.VerifyService.SendOtp(request);
+
             return Ok(response);
         }
 
         [AllowAnonymous]
-        [HttpPost("get")]
-        public async Task<IActionResult> GetWithdrawalHistory(GetWithdrawalDto request)
+        [HttpPost("validate")]
+        public async Task<IActionResult> Verify(VerifyCodeDto request)
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
                 return Ok(_serviceManager.UserService.UnAuthorized());
 
-            var response = await _serviceManager.WithdrawalService.GetWithdrawalsByEmail(request.Email);
+            var response = await _serviceManager.VerifyService.CheckOtp(request);
+
             return Ok(response);
         }
     }

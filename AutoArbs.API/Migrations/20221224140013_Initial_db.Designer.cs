@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoArbs.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20221215214939_Initial")]
-    partial class Initial
+    [Migration("20221224140013_Initial_db")]
+    partial class Initial_db
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -63,6 +63,31 @@ namespace AutoArbs.API.Migrations
                     b.ToTable("DepositHistories");
                 });
 
+            modelBuilder.Entity("AutoArbs.Domain.Models.Otp", b =>
+                {
+                    b.Property<string>("OtpId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OtpId");
+
+                    b.ToTable("Otps");
+                });
+
             modelBuilder.Entity("AutoArbs.Domain.Models.User", b =>
                 {
                     b.Property<string>("Email")
@@ -74,12 +99,18 @@ namespace AutoArbs.API.Migrations
                     b.Property<decimal>("Bonus")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -98,6 +129,9 @@ namespace AutoArbs.API.Migrations
                     b.Property<decimal>("TotalWithdrawal")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Email");
 
                     b.ToTable("Users");
@@ -108,26 +142,32 @@ namespace AutoArbs.API.Migrations
                             Email = "john@gmail.com",
                             Balance = 0m,
                             Bonus = 0m,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "John",
                             IsActive = false,
+                            LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "Doe",
                             Password = "John123",
                             TotalBonus = 0m,
                             TotalDeposit = 0m,
-                            TotalWithdrawal = 0m
+                            TotalWithdrawal = 0m,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Email = "mary@gmail.com",
                             Balance = 50m,
                             Bonus = 0m,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Mary",
                             IsActive = false,
+                            LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "Jane",
                             Password = "mary123",
                             TotalBonus = 0m,
                             TotalDeposit = 0m,
-                            TotalWithdrawal = 0m
+                            TotalWithdrawal = 0m,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -157,7 +197,7 @@ namespace AutoArbs.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserEmail")

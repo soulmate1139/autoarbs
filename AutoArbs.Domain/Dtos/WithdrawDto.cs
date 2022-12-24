@@ -31,11 +31,11 @@ namespace AutoArbs.Domain.Dtos
         public IEnumerable<Withdrawal> Data { get; set; }
     }
 
-    public class UpdateWithdrawalDto
+    public class UpdateWithdrawalRequestDto
     {
+        public string Token { get; set; }
         public string TransactionId { get; set; }
         public string Status { get; set; }
-        public bool IsSuccess { get; set; }
     }
 
 }

@@ -27,7 +27,7 @@ namespace AutoArbs.API.Controllers
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
-                return Unauthorized();
+                return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.DepositService.CreateDeposit(request);
             return Ok(response);
@@ -39,7 +39,7 @@ namespace AutoArbs.API.Controllers
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
-                return Unauthorized();
+                return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.DepositService.GetDepositsByEmail(request.Email);
             return Ok(response);
@@ -51,7 +51,7 @@ namespace AutoArbs.API.Controllers
         {
             var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
             if (!IsTokenValid)
-                return Unauthorized();
+                return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.DepositService.Bonus(request);
             return Ok(response);

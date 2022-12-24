@@ -18,23 +18,23 @@ namespace AutoArbs.Infrastructure.Services
             _repository = repository;
         }
 
-        private static ResponseMessage DisplayInvalidResponse(string message)
+        private static ResponseMessageWithRefId DisplayInvalidResponse(string message)
         {
-            return new ResponseMessage
+            return new ResponseMessageWithRefId
             {
                 StatusCode = "400",
                 IsSuccess = false,
                 StatusMessage = message
             };
         }
-        public async Task<ResponseMessage> CreateDeposit(DepositDto depositDto)
+        public async Task<ResponseMessageWithRefId> CreateDeposit(DepositDto depositDto)
         {
             if (depositDto == null)
                 return DisplayInvalidResponse("Your input is invalid");
 
             var getUser = _repository.UserRepository.GetUserByEmail(depositDto.Email, false);
             if (getUser == null)
-                return DisplayInvalidResponse("Your username is invalid");
+                return DisplayInvalidResponse("User not found");
 
             if (string.IsNullOrEmpty(Convert.ToString(depositDto.Amount)) || string.IsNullOrEmpty(depositDto.Method))
                 return DisplayInvalidResponse("Kindly enter all the fields");
@@ -44,16 +44,17 @@ namespace AutoArbs.Infrastructure.Services
             deposit.Deposit_Email= depositDto.Email.ToLower();
             deposit.Amount=depositDto.Amount;
             deposit.Method=depositDto.Method;
-            deposit.Status="Processing";
+            deposit.Status="processing";
             deposit.IsSuccess=false;
             deposit.CreatedAt= DateTime.UtcNow;
 
             _repository.DepositRepository.CreateDeposit(deposit);
             await _repository.SaveAsync();
-            return new ResponseMessage
+            return new ResponseMessageWithRefId
             {
                 StatusCode = "201",
                 IsSuccess = true,
+                ReferenceId = deposit.TransactionId,
                 StatusMessage = "Deposit Created"
             };
         }
@@ -128,6 +129,8 @@ namespace AutoArbs.Infrastructure.Services
                         };
 
                     getThisUserFromDb.Bonus = getThisUserFromDb.Bonus + bonusRequest.Amount;
+                    getThisUserFromDb.TotalBonus = getThisUserFromDb.TotalBonus+ bonusRequest.Amount;
+                    getThisUserFromDb.UpdatedAt = DateTime.UtcNow;
                     _repository.UserRepository.Update(getThisUserFromDb);
                 }
                 await _repository.SaveAsync();
@@ -160,18 +163,58 @@ namespace AutoArbs.Infrastructure.Services
         /// </summary>
         /// <param name="depositDto"></param>
         /// <returns></returns>
-        public async Task<ResponseMessage> UpdateDeposit(UpdateDepositDto depositDto)
+        public async Task<ResponseMessage> UpdateDeposit(UpdateDepositRequestDto request)
         {
-            var getDeposit = _repository.DepositRepository.GetDepositByTransactionId(depositDto.TransactionId, true);
-            getDeposit.Status = depositDto.Status;
-            getDeposit.IsSuccess=depositDto.IsSuccess;
+            if (request.Status.ToLower() != "processing" && request.Status.ToLower() != "successful" && request.Status.ToLower() != "denied")
+                return new ResponseMessage
+                {
+                    StatusCode = "404",
+                    StatusMessage = "Invalid status",
+                    IsSuccess = false
+                };
+
+            var getDeposit = _repository.DepositRepository.GetDepositByTransactionId(request.TransactionId, true);
+            if(getDeposit == null)
+                return new ResponseMessage
+                {
+                    StatusCode = "404",
+                    StatusMessage = "Transaction not found",
+                    IsSuccess = false
+                };
+            if (getDeposit.Status != "processing")
+                return new ResponseMessage
+                {
+                    StatusCode = "400",
+                    StatusMessage = "User need to verify this transaction before any update can be performed",
+                    IsSuccess = false
+                };
+
+            getDeposit.Status = request.Status;
+            getDeposit.IsSuccess=true;
             getDeposit.UpdateAt= DateTime.UtcNow;
-            
+
+            //UPDATE BALANCE BEGIN
+            var getUserFromDb = _repository.UserRepository.GetUserByEmail(getDeposit.Deposit_Email, true);
+            var currentBalance = Util.UpdateBalance("deposit", getUserFromDb, getDeposit.Amount);
+            if (currentBalance < 0)
+                return new ResponseMessage
+                {
+                    StatusCode = "400",
+                    StatusMessage = "Your balance is too low for this transaction",
+                    IsSuccess = false
+                };
+            getUserFromDb.Balance = currentBalance;
+            getUserFromDb.TotalDeposit = getUserFromDb.TotalDeposit + getDeposit.Amount;
+            getUserFromDb.UpdatedAt = DateTime.UtcNow;
+            _repository.UserRepository.Update(getUserFromDb);
+            //UPDATE BALANCE END
+
             _repository.DepositRepository.UpdateDeposit(getDeposit);
             await _repository.SaveAsync();
             return new ResponseMessage
             {
-                StatusCode = "201",
+                StatusCode = "200",
+                IsSuccess = true,
                 StatusMessage = "Deposit Updated"
             };
         }

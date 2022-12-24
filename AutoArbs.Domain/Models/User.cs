@@ -20,6 +20,9 @@ namespace AutoArbs.Domain.Models
         public decimal TotalBonus { get; set; }
         public decimal Bonus { get; set; }
         public bool IsActive { get; set; }
+        public DateTime LastLogin { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public IEnumerable<Withdrawal> WithdrawalHistory { get; set; }
         public IEnumerable<Deposit> DepositHistory { get; set; }
 
