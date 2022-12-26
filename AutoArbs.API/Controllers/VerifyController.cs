@@ -25,12 +25,13 @@ namespace AutoArbs.API.Controllers
         [HttpPost("sendotp")]
         public async Task<IActionResult> Enroll(SendOtpDto request)
         {
-            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            if (!IsTokenValid)
-                return Ok(_serviceManager.UserService.UnAuthorized());
-
+            if (request.Action != "1")
+            {
+                var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+                if (!IsTokenValid)
+                    return Ok(_serviceManager.UserService.UnAuthorized());
+            }
             var response = await _serviceManager.VerifyService.SendOtp(request);
-
             return Ok(response);
         }
 
@@ -38,12 +39,13 @@ namespace AutoArbs.API.Controllers
         [HttpPost("validate")]
         public async Task<IActionResult> Verify(VerifyCodeDto request)
         {
-            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            if (!IsTokenValid)
-                return Ok(_serviceManager.UserService.UnAuthorized());
-
+            if (request.Action != "1")
+            {
+                var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+                if (!IsTokenValid)
+                    return Ok(_serviceManager.UserService.UnAuthorized());
+            }
             var response = await _serviceManager.VerifyService.CheckOtp(request);
-
             return Ok(response);
         }
     }
