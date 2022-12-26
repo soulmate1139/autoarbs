@@ -33,13 +33,13 @@ namespace AutoArbs.Infrastructure.Services
                     StatusMessage = "User not found",
                 };
 
-            //CHECK IF EMAIL EXIST
+            //CHECK IF The transaction that needs this verification is not empty.... excluding login
             if (string.IsNullOrEmpty(request.TransactionId) && request.Action != "1")
                 return new ResponseMessageWithOtp
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Email is in bad format",
+                    StatusMessage = "Transaction Id shouldn't be empty",
                 };
             
             //MAKE SURE WITHDRAW DOESN'T CALL THIS
