@@ -32,7 +32,11 @@ namespace AutoArbs.API.Controllers
                     return Ok(_serviceManager.UserService.UnAuthorized());
             }
             var response = await _serviceManager.VerifyService.SendOtp(request);
-            return Ok(response);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return BadRequest(response);
         }
 
         [AllowAnonymous]
@@ -46,7 +50,11 @@ namespace AutoArbs.API.Controllers
                     return Ok(_serviceManager.UserService.UnAuthorized());
             }
             var response = await _serviceManager.VerifyService.CheckOtp(request);
-            return Ok(response);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return BadRequest(response);
         }
     }
 }

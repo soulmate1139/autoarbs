@@ -31,7 +31,11 @@ namespace AutoArbs.API.Controllers
                 return Unauthorized();
 
             var response = await _serviceManager.UserService.Register(enrollDto, token);
-            return Ok(response);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return BadRequest(response);
         }
         
         [AllowAnonymous]
@@ -43,7 +47,11 @@ namespace AutoArbs.API.Controllers
                 return Unauthorized();
             
             var response = await _serviceManager.UserService.Login(returningUser, token);
+
+            if (response.IsSuccess)
                 return Ok(response);
+            else
+                return BadRequest(response);
         }
 
         //[AllowAnonymous]

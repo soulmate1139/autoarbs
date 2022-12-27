@@ -34,8 +34,11 @@ namespace AutoArbs.API.Controllers
             }
 
             var response = await _serviceManager.UserService.GetByEmail(request.Email, isTokenPassed);
-            
-            return Ok(response);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return BadRequest(response);
         }
 
         //[HttpGet("Email")]

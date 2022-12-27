@@ -18,7 +18,7 @@ namespace AutoArbs.Infrastructure.Services
             if (!Util.EmailIsValid(request.Email))
                 return new ResponseMessageWithOtp
                 {
-                    StatusCode = "400",
+                    StatusCode = "40",
                     IsSuccess = false,
                     StatusMessage = "Email is in bad format",
                 };
@@ -28,7 +28,7 @@ namespace AutoArbs.Infrastructure.Services
             if (getThisEmailFromDb == null)
                 return new ResponseMessageWithOtp
                 {
-                    StatusCode = "400",
+                    StatusCode = "44",
                     IsSuccess = false,
                     StatusMessage = "User not found",
                 };
@@ -37,7 +37,7 @@ namespace AutoArbs.Infrastructure.Services
             if (string.IsNullOrEmpty(request.TransactionId) && request.Action != "1")
                 return new ResponseMessageWithOtp
                 {
-                    StatusCode = "400",
+                    StatusCode = "40",
                     IsSuccess = false,
                     StatusMessage = "Transaction Id shouldn't be empty",
                 };
@@ -47,7 +47,7 @@ namespace AutoArbs.Infrastructure.Services
             {
                 return new ResponseMessageWithOtp
                 {
-                    StatusCode = "400",
+                    StatusCode = "40",
                     IsSuccess = false,
                     StatusMessage = "Withdrawal can not use this endpoint",
                 };
@@ -71,14 +71,14 @@ namespace AutoArbs.Infrastructure.Services
             if (!isSendSuccessful)
                 return new ResponseMessageWithOtp
                 {
-                    StatusCode = "500",
+                    StatusCode = "50",
                     IsSuccess = false,
-                    StatusMessage = "Error, Otp not sent"
+                    StatusMessage = "Error occuried while sending otp"
                 };
             
             return new ResponseMessageWithOtp
             {
-                StatusCode = "200",
+                StatusCode = "20",
                 IsSuccess = true,
                 ReferenceId = otpId,
                 StatusMessage = "Verification code sent!",
@@ -89,7 +89,7 @@ namespace AutoArbs.Infrastructure.Services
             if(request.Code == "" || request.Email == "" || request.Action == "" || request.ReferenceId == "")
                 return new ResponseMessage
                 {
-                    StatusCode = "400",
+                    StatusCode = "40",
                     IsSuccess = false,
                     StatusMessage = "Kindly enter all fields",
                 };
@@ -98,7 +98,7 @@ namespace AutoArbs.Infrastructure.Services
             if(getOtpFromDb == null)
                 return new ResponseMessage
                 {
-                    StatusCode = "404",
+                    StatusCode = "44",
                     IsSuccess = false,
                     StatusMessage = "Transaction not found",
                 };
@@ -106,24 +106,14 @@ namespace AutoArbs.Infrastructure.Services
             var currentTime = DateTime.UtcNow;
             var timeInterval = currentTime.Subtract(getOtpFromDb.CreatedAt).TotalMinutes;
 
-            if (timeInterval > 4)
+            if (timeInterval > 4 || Util.StringHasher(request.Code) != getOtpFromDb.Code)
             {
                 var msg = request.Code == getOtpFromDb.Code ? "Code Expired" : "Invalid Code";
                 return new ResponseMessage
                 {
-                    StatusCode = "400",
+                    StatusCode = "40",
                     IsSuccess = false,
                     StatusMessage = msg,
-                };
-            }
-
-            if (Util.StringHasher(request.Code) != getOtpFromDb.Code)
-            {
-                return new ResponseMessage
-                {
-                    StatusCode = "400",
-                    IsSuccess = false,
-                    StatusMessage = "Wrong Code",
                 };
             }
 
@@ -149,7 +139,7 @@ namespace AutoArbs.Infrastructure.Services
                     {
                         return new ResponseMessage
                         {
-                            StatusCode = "404",
+                            StatusCode = "44",
                             IsSuccess = false,
                             StatusMessage = "Transaction not found",
                         };
@@ -159,7 +149,7 @@ namespace AutoArbs.Infrastructure.Services
             {
                 return new ResponseMessage
                 {
-                    StatusCode = "400",
+                    StatusCode = "40",
                     IsSuccess = false,
                     StatusMessage = "Wrong Action",
                 };
@@ -167,7 +157,7 @@ namespace AutoArbs.Infrastructure.Services
 
             return new ResponseMessage
             {
-                StatusCode = "200",
+                StatusCode = "20",
                 IsSuccess = true,
                 StatusMessage = "Verification Completed",
             };

@@ -30,7 +30,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (!Util.EmailIsValid(newUser.Email))
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
                         StatusMessage = "Email is in bad format",
                     };
@@ -39,9 +39,9 @@ namespace AutoArbs.Infrastructure.Services
                 if (newUser.Password.Length < 8)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
-                        StatusMessage = "Kindly enter a unique password with a minimum of 8 letters",
+                        StatusMessage = "Kindly enter a password with a minimum of 8 letters",
                     };
 
                 //CHECK IF EMAIL EXIST
@@ -49,7 +49,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (getThisEmailFromDb != null)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
                         StatusMessage = "Email is not available",
                     };
@@ -71,7 +71,7 @@ namespace AutoArbs.Infrastructure.Services
                 user.Password = "";
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "201",
+                    StatusCode = "21",
                     IsSuccess = true,
                     Token = token,
                     StatusMessage = "Account Created",
@@ -83,9 +83,9 @@ namespace AutoArbs.Infrastructure.Services
                 Console.WriteLine(ex);
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "500",
+                    StatusCode = "50",
                     IsSuccess = false,
-                    StatusMessage = "Account Not Created"
+                    StatusMessage = "Error occuried while creating an account"
                 };
             }
         }
@@ -98,7 +98,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (!Util.EmailIsValid(returningUser.Email))
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
                         StatusMessage = "Email is in bad format",
                     };
@@ -109,7 +109,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (getThisUserFromDb == null || getThisUserFromDb.Password != hashedPassword)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "44",
                         IsSuccess = false,
                         StatusMessage = "Login information is incorrect",
                     };
@@ -118,9 +118,9 @@ namespace AutoArbs.Infrastructure.Services
                 if(getThisUserFromDb.IsActive == false)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "23",
                         IsSuccess = false,
-                        StatusMessage = "Kindly verify your email before proceeding to login",
+                        StatusMessage = "Kindly verify your email to active your account",
                     };
 
                 //ADD WITHDRAWAL HISTORY AND CALCULATE TOTAL SUCCESSFUL WITHDRAWALS
@@ -159,7 +159,7 @@ namespace AutoArbs.Infrastructure.Services
 
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "200",
+                    StatusCode = "20",
                     IsSuccess = true,
                     StatusMessage = "Login successful",
                     Token = token,
@@ -171,9 +171,9 @@ namespace AutoArbs.Infrastructure.Services
                 Console.WriteLine(ex);
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "500",
+                    StatusCode = "50",
                     IsSuccess = false,
-                    StatusMessage = "Login Failed"
+                    StatusMessage = "Error occuried while trying to login"
                 };
             }
         }
@@ -186,7 +186,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (string.IsNullOrEmpty(email))
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
                         StatusMessage = "bad input",
                     };
@@ -195,7 +195,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (!Util.EmailIsValid(email))
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
                         StatusMessage = "Email is in bad format",
                     };
@@ -206,7 +206,7 @@ namespace AutoArbs.Infrastructure.Services
                 if (getThisUserFromDb == null)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "404",
+                        StatusCode = "44",
                         IsSuccess = false,
                         StatusMessage = "User not found",
                     };
@@ -228,7 +228,7 @@ namespace AutoArbs.Infrastructure.Services
                 }
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "200",
+                    StatusCode = "20",
                     IsSuccess = true,
                     StatusMessage = "User Found",
                     UserData = getThisUserFromDb
@@ -239,7 +239,7 @@ namespace AutoArbs.Infrastructure.Services
                 Console.WriteLine(ex);
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "500",
+                    StatusCode = "50",
                     IsSuccess = false,
                     StatusMessage = "Error while fetching user"
                 };
@@ -250,8 +250,8 @@ namespace AutoArbs.Infrastructure.Services
         {
             return new ResponseMessage
             {
-                StatusCode = "404",
-                StatusMessage = "Invalid status",
+                StatusCode = "41",
+                StatusMessage = "User is unauthorized",
                 IsSuccess = false
             };
         }

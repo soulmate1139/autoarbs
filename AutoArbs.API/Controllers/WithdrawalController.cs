@@ -30,7 +30,11 @@ namespace AutoArbs.API.Controllers
                 return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.WithdrawalService.CreateWithdrawal(request);
-            return Ok(response);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return BadRequest(response);
         }
 
         [AllowAnonymous]
@@ -42,7 +46,11 @@ namespace AutoArbs.API.Controllers
                 return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.WithdrawalService.GetWithdrawalsByEmail(request.Email);
-            return Ok(response);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return BadRequest(response);
         }
     }
 }

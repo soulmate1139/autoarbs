@@ -18,11 +18,11 @@ namespace AutoArbs.Infrastructure.Services
             _repository = repository;
         }
 
-        private static ResponseMessageWithRefId DisplayInvalidResponse(string message)
+        private static ResponseMessageWithRefId DisplayInvalidResponse(string message, string code)
         {
             return new ResponseMessageWithRefId
             {
-                StatusCode = "400",
+                StatusCode = code,
                 IsSuccess = false,
                 StatusMessage = message
             };
@@ -30,14 +30,14 @@ namespace AutoArbs.Infrastructure.Services
         public async Task<ResponseMessageWithRefId> CreateDeposit(DepositDto depositDto)
         {
             if (depositDto == null)
-                return DisplayInvalidResponse("Your input is invalid");
+                return DisplayInvalidResponse("Your input is invalid", "40");
 
             var getUser = _repository.UserRepository.GetUserByEmail(depositDto.Email, false);
             if (getUser == null)
-                return DisplayInvalidResponse("User not found");
+                return DisplayInvalidResponse("User not found", "44");
 
             if (string.IsNullOrEmpty(Convert.ToString(depositDto.Amount)) || string.IsNullOrEmpty(depositDto.Method))
-                return DisplayInvalidResponse("Kindly enter all the fields");
+                return DisplayInvalidResponse("Kindly enter all the fields", "40");
 
             var deposit = new Deposit();
             deposit.TransactionId= Convert.ToString(Guid.NewGuid());
@@ -52,7 +52,7 @@ namespace AutoArbs.Infrastructure.Services
             await _repository.SaveAsync();
             return new ResponseMessageWithRefId
             {
-                StatusCode = "201",
+                StatusCode = "21",
                 IsSuccess = true,
                 ReferenceId = deposit.TransactionId,
                 StatusMessage = "Deposit Created"
@@ -61,39 +61,52 @@ namespace AutoArbs.Infrastructure.Services
 
         public async Task<ResponseMessageDeposit> GetDepositsByEmail(string email)
         {
-            if (string.IsNullOrEmpty(email))
-                return new ResponseMessageDeposit
-                {
-                    StatusCode = "400",
-                    IsSuccess = false,
-                    StatusMessage = "Kindly enter your email",
-                };
-
-            var getUser = _repository.UserRepository.GetUserByEmail(email, false);
-            if (getUser == null)
-                return new ResponseMessageDeposit
-                {
-                    StatusCode = "400",
-                    IsSuccess = false,
-                    StatusMessage = "No user is found",
-                };
-
-            var depositHistories = await _repository.DepositRepository.GetDepositByEmail(email, false);
-            if (depositHistories == null)
-                return new ResponseMessageDeposit
-                {
-                    StatusCode = "400",
-                    IsSuccess = false,
-                    StatusMessage = "No history found",
-                };
-
-            return new ResponseMessageDeposit
+            try
             {
-                StatusCode = "200",
-                IsSuccess = true,
-                StatusMessage = "Get Deposit",
-                Data = depositHistories.ToList()
-            };
+                if (string.IsNullOrEmpty(email))
+                    return new ResponseMessageDeposit
+                    {
+                        StatusCode = "40",
+                        IsSuccess = false,
+                        StatusMessage = "Kindly enter your email",
+                    };
+
+                var getUser = _repository.UserRepository.GetUserByEmail(email, false);
+                if (getUser == null)
+                    return new ResponseMessageDeposit
+                    {
+                        StatusCode = "44",
+                        IsSuccess = false,
+                        StatusMessage = "User not found",
+                    };
+
+                var depositHistories = await _repository.DepositRepository.GetDepositByEmail(email, false);
+                if (depositHistories == null)
+                    return new ResponseMessageDeposit
+                    {
+                        StatusCode = "44",
+                        IsSuccess = false,
+                        StatusMessage = "No deposit history found",
+                    };
+
+                return new ResponseMessageDeposit
+                {
+                    StatusCode = "20",
+                    IsSuccess = true,
+                    StatusMessage = "Get deposit",
+                    Data = depositHistories.ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new ResponseMessageDeposit
+                {
+                    StatusCode = "50",
+                    IsSuccess = false,
+                    StatusMessage = "Error occuried while making for user"
+                };
+            }
         }
 
         public async Task<ResponseMessageWithUser> Bonus(BonusDto bonusRequest)
@@ -103,15 +116,15 @@ namespace AutoArbs.Infrastructure.Services
                 if (bonusRequest.Amount < 1)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
-                        StatusMessage = "Bonus amount must be greater than zero",
+                        StatusMessage = "Bonus amount must be greater than zero (0)",
                     };
 
                 if (bonusRequest.UserList.Count < 0)
                     return new ResponseMessageWithUser
                     {
-                        StatusCode = "400",
+                        StatusCode = "40",
                         IsSuccess = false,
                         StatusMessage = "Enter the list of users entitled to the bonus",
                     };
@@ -123,7 +136,7 @@ namespace AutoArbs.Infrastructure.Services
                     if (getThisUserFromDb == null)
                         return new ResponseMessageWithUser
                         {
-                            StatusCode = "404",
+                            StatusCode = "44",
                             IsSuccess = false,
                             StatusMessage = "User not found",
                         };
@@ -137,7 +150,7 @@ namespace AutoArbs.Infrastructure.Services
 
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "201",
+                    StatusCode = "21",
                     IsSuccess = true,
                     StatusMessage = "Bonus added for user(s)",
                 };
@@ -148,9 +161,9 @@ namespace AutoArbs.Infrastructure.Services
                 Console.WriteLine(ex);
                 return new ResponseMessageWithUser
                 {
-                    StatusCode = "500",
+                    StatusCode = "50",
                     IsSuccess = false,
-                    StatusMessage = "Error while adding bonus for user"
+                    StatusMessage = "Error occuried while adding bonus for user(s)"
                 };
             }
         }
@@ -168,7 +181,7 @@ namespace AutoArbs.Infrastructure.Services
             if (request.Status.ToLower() != "processing" && request.Status.ToLower() != "successful" && request.Status.ToLower() != "denied")
                 return new ResponseMessage
                 {
-                    StatusCode = "404",
+                    StatusCode = "40",
                     StatusMessage = "Invalid status",
                     IsSuccess = false
                 };
@@ -177,14 +190,14 @@ namespace AutoArbs.Infrastructure.Services
             if(getDeposit == null)
                 return new ResponseMessage
                 {
-                    StatusCode = "404",
+                    StatusCode = "44",
                     StatusMessage = "Transaction not found",
                     IsSuccess = false
                 };
             if (getDeposit.Status != "processing")
                 return new ResponseMessage
                 {
-                    StatusCode = "400",
+                    StatusCode = "23",
                     StatusMessage = "User need to verify this transaction before any update can be performed",
                     IsSuccess = false
                 };
@@ -199,7 +212,7 @@ namespace AutoArbs.Infrastructure.Services
             if (currentBalance < 0)
                 return new ResponseMessage
                 {
-                    StatusCode = "400",
+                    StatusCode = "42",
                     StatusMessage = "Your balance is too low for this transaction",
                     IsSuccess = false
                 };
@@ -213,7 +226,7 @@ namespace AutoArbs.Infrastructure.Services
             await _repository.SaveAsync();
             return new ResponseMessage
             {
-                StatusCode = "200",
+                StatusCode = "20",
                 IsSuccess = true,
                 StatusMessage = "Deposit Updated"
             };
