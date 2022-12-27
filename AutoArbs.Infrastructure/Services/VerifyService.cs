@@ -105,14 +105,17 @@ namespace AutoArbs.Infrastructure.Services
 
             var currentTime = DateTime.UtcNow;
             var timeInterval = currentTime.Subtract(getOtpFromDb.CreatedAt).TotalMinutes;
-            
-            if(timeInterval > 4)
+
+            if (timeInterval > 4)
+            {
+                var msg = request.Code == getOtpFromDb.Code ? "Code Expired" : "Invalid Code";
                 return new ResponseMessage
                 {
                     StatusCode = "400",
                     IsSuccess = false,
-                    StatusMessage = "Code expired",
+                    StatusMessage = msg,
                 };
+            }
 
             if (Util.StringHasher(request.Code) != getOtpFromDb.Code)
             {
