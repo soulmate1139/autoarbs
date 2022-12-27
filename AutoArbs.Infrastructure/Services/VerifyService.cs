@@ -43,7 +43,7 @@ namespace AutoArbs.Infrastructure.Services
                 };
             
             //MAKE SURE WITHDRAW DOESN'T CALL THIS
-            if(request.Action != "2" || request.Action != "3")
+            if(request.Action == "2")
             {
                 return new ResponseMessageWithOtp
                 {
