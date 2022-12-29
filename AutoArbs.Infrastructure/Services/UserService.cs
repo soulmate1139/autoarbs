@@ -75,7 +75,7 @@ namespace AutoArbs.Infrastructure.Services
                     IsSuccess = true,
                     Token = token,
                     StatusMessage = "Account Created",
-                    UserData = user
+                    //UserData = user
                 };
             }
             catch (Exception ex)

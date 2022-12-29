@@ -24,9 +24,9 @@ namespace AutoArbs.API.Controllers
         [HttpPost("updatewithdrawal")]
         public async Task<IActionResult> UpdateWithdrawal(UpdateWithdrawalRequestDto request)
         {
-            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            if (!IsTokenValid)
-                return Ok(_serviceManager.UserService.UnAuthorized());
+            //var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+            //if (!IsTokenValid)
+            //    return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.WithdrawalService.UpdateWithdrawal(request);
 
@@ -40,9 +40,9 @@ namespace AutoArbs.API.Controllers
         [HttpPost("updatedeposit")]
         public async Task<IActionResult> CreateDeposit(UpdateDepositRequestDto request)
         {
-            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            if (!IsTokenValid)
-                return Ok(_serviceManager.UserService.UnAuthorized());
+            //var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+            //if (!IsTokenValid)
+            //    return Ok(_serviceManager.UserService.UnAuthorized());
 
             var response = await _serviceManager.DepositService.UpdateDeposit(request);
 

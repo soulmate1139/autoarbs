@@ -84,10 +84,10 @@ namespace AutoArbs.Infrastructure.Services
                 StatusMessage = "Verification code sent!",
             };
         }
-        public async Task<ResponseMessage> CheckOtp(VerifyCodeDto request){
+        public async Task<ResponseMessageWithUser> CheckOtp(VerifyCodeDto request){
             
             if(request.Code == "" || request.Email == "" || request.Action == "" || request.ReferenceId == "")
-                return new ResponseMessage
+                return new ResponseMessageWithUser
                 {
                     StatusCode = "40",
                     IsSuccess = false,
@@ -96,7 +96,7 @@ namespace AutoArbs.Infrastructure.Services
 
             var getOtpFromDb = _repository.OtpRepository.GetOtp(request.ReferenceId, false);
             if(getOtpFromDb == null)
-                return new ResponseMessage
+                return new ResponseMessageWithUser
                 {
                     StatusCode = "44",
                     IsSuccess = false,
@@ -109,7 +109,7 @@ namespace AutoArbs.Infrastructure.Services
             if (timeInterval > 4 || Util.StringHasher(request.Code) != getOtpFromDb.Code)
             {
                 var msg = request.Code == getOtpFromDb.Code ? "Code Expired" : "Invalid Code";
-                return new ResponseMessage
+                return new ResponseMessageWithUser
                 {
                     StatusCode = "40",
                     IsSuccess = false,
@@ -137,7 +137,7 @@ namespace AutoArbs.Infrastructure.Services
                     }
                     else
                     {
-                        return new ResponseMessage
+                        return new ResponseMessageWithUser
                         {
                             StatusCode = "44",
                             IsSuccess = false,
@@ -147,7 +147,7 @@ namespace AutoArbs.Infrastructure.Services
             } 
             else 
             {
-                return new ResponseMessage
+                return new ResponseMessageWithUser
                 {
                     StatusCode = "40",
                     IsSuccess = false,
@@ -155,11 +155,12 @@ namespace AutoArbs.Infrastructure.Services
                 };
             }
 
-            return new ResponseMessage
+            return new ResponseMessageWithUser
             {
                 StatusCode = "20",
                 IsSuccess = true,
                 StatusMessage = "Verification Completed",
+                UserData = getUserFromDb
             };
         }
     }

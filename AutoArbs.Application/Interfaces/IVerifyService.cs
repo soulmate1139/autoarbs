@@ -10,6 +10,6 @@ namespace AutoArbs.Application.Interfaces
     public interface IVerifyService
     {
         Task<ResponseMessageWithOtp> SendOtp(SendOtpDto request);
-        Task<ResponseMessage> CheckOtp(VerifyCodeDto request);
+        Task<ResponseMessageWithUser> CheckOtp(VerifyCodeDto request);
     }
 }

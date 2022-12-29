@@ -25,7 +25,7 @@ namespace AutoArbs.Domain.Dtos
 
     public class UpdateDepositRequestDto
     {
-        public string Token { get; set; }
+        //public string Token { get; set; }
         public string TransactionId { get; set; }
         public string Status { get; set; }
     }
