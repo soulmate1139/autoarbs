@@ -24,9 +24,9 @@ namespace AutoArbs.API.Controllers
         [HttpPost("updatewithdrawal")]
         public async Task<IActionResult> UpdateWithdrawal(UpdateWithdrawalRequestDto request)
         {
-            //var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            //if (!IsTokenValid)
-            //    return Ok(_serviceManager.UserService.UnAuthorized());
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+            if (!IsTokenValid)
+                return Ok(_serviceManager.AdminService.UnAuthorized());
 
             var response = await _serviceManager.AdminService.UpdateWithdrawal(request);
 
@@ -40,9 +40,9 @@ namespace AutoArbs.API.Controllers
         [HttpPost("updatedeposit")]
         public async Task<IActionResult> CreateDeposit(UpdateDepositRequestDto request)
         {
-            //var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
-            //if (!IsTokenValid)
-            //    return Ok(_serviceManager.UserService.UnAuthorized());
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(request.Token);
+            if (!IsTokenValid)
+                return Ok(_serviceManager.AdminService.UnAuthorized());
 
             var response = await _serviceManager.AdminService.UpdateDeposit(request);
 
@@ -67,8 +67,12 @@ namespace AutoArbs.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("getusers")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers(string token)
         {
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(token);
+            if (!IsTokenValid)
+                return Ok(_serviceManager.AdminService.UnAuthorized());
+
             var response = await _serviceManager.AdminService.GetUsers();
 
             if (response.IsSuccess)
@@ -79,10 +83,13 @@ namespace AutoArbs.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("getdeposits")]
-        public async Task<IActionResult> GetDeposits()
+        public async Task<IActionResult> GetDeposits(string token)
         {
-            var response = await _serviceManager.AdminService.GetAllDeposits();
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(token);
+            if (!IsTokenValid)
+                return Ok(_serviceManager.AdminService.UnAuthorized());
 
+            var response = await _serviceManager.AdminService.GetAllDeposits();
             if (response.IsSuccess)
                 return Ok(response);
             else
@@ -91,8 +98,12 @@ namespace AutoArbs.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("getwithdraws")]
-        public async Task<IActionResult> GetWithdraws()
+        public async Task<IActionResult> GetWithdraws(string token)
         {
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(token);
+            if (!IsTokenValid)
+                return Ok(_serviceManager.AdminService.UnAuthorized());
+
             var response = await _serviceManager.AdminService.GetAllWithdraws();
 
             if (response.IsSuccess)
@@ -103,8 +114,12 @@ namespace AutoArbs.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("getalltransactions")]
-        public async Task<IActionResult> GetAllTransactions()
+        public async Task<IActionResult> GetAllTransactions(string token)
         {
+            var IsTokenValid = _jwtAuthenticationManager.IsTokenValid(token);
+            if (!IsTokenValid)
+                return Ok(_serviceManager.AdminService.UnAuthorized());
+
             var response = await _serviceManager.AdminService.GetAllTransactions();
 
             if (response.IsSuccess)
