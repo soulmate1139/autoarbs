@@ -9,6 +9,7 @@ namespace AutoArbs.Application.Interfaces
     public interface IRepositoryManager
     {
         IUserRepository UserRepository { get; }
+        IAdminRepository AdminRepository { get; }
         IDepositRepository DepositRepository { get; }
         IWithdrawalRepository WithdrawalRepository { get; }
         IOtpRepository OtpRepository{ get; }

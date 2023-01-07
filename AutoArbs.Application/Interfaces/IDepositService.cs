@@ -12,7 +12,6 @@ namespace AutoArbs.Application.Interfaces
     {
         Task<ResponseMessageWithRefId> CreateDeposit(DepositDto deposit);
         Task<ResponseMessageDeposit> GetDepositsByEmail(string email);
-        Task<ResponseMessage> UpdateDeposit(UpdateDepositRequestDto deposit);
         Task<ResponseMessageWithUser> Bonus(BonusDto bonusRequest);
     }
 }

@@ -12,6 +12,7 @@ namespace AutoArbs.Infrastructure.Repositories
     {
         private readonly RepositoryContext _repositoryContext;
         private readonly Lazy<IUserRepository> _userRepository;
+        private readonly Lazy<IAdminRepository> _adminRepository;
         private readonly Lazy<IDepositRepository> _depositRepository;
         private readonly Lazy<IWithdrawalRepository> _withdrawalRepository;
         private readonly Lazy<IOtpRepository> _otpRepository;
@@ -20,12 +21,14 @@ namespace AutoArbs.Infrastructure.Repositories
         {
             _repositoryContext = repositoryContext;
             _userRepository = new Lazy<IUserRepository>(() => new UserRepository(repositoryContext));
+            _adminRepository = new Lazy<IAdminRepository>(() => new AdminRepository(repositoryContext));
             _depositRepository = new Lazy<IDepositRepository>(() => new DepositRepository(repositoryContext));
             _withdrawalRepository = new Lazy<IWithdrawalRepository>(() => new WithdrawalRepository(repositoryContext));
             _otpRepository = new Lazy<IOtpRepository>(() => new OtpRepository(repositoryContext));
         }
 
         public IUserRepository UserRepository => _userRepository.Value;
+        public IAdminRepository AdminRepository => _adminRepository.Value;
         public IDepositRepository DepositRepository => _depositRepository.Value;
 
         public IWithdrawalRepository WithdrawalRepository => _withdrawalRepository.Value;

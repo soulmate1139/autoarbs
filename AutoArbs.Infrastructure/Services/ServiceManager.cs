@@ -5,6 +5,7 @@ namespace AutoArbs.Infrastructure.Services
     public sealed class ServiceManager : IServiceManager
     {
         private readonly Lazy<IUserService> _userService;
+        private readonly Lazy<IAdminService> _adminService;
         private readonly Lazy<IDepositService> _depositService;
         private readonly Lazy<IWithdrawalService> _withdrawalService;
         private readonly Lazy<IVerifyService> _verifyService;
@@ -12,6 +13,8 @@ namespace AutoArbs.Infrastructure.Services
         {
             _userService = new Lazy<IUserService>(() => new
             UserService(repositoryManager));
+            _adminService = new Lazy<IAdminService>(() => new
+            AdminService(repositoryManager));
             _depositService = new Lazy<IDepositService>(() => new
             DepositService(repositoryManager));
             _withdrawalService = new Lazy<IWithdrawalService>(() => new
@@ -20,6 +23,7 @@ namespace AutoArbs.Infrastructure.Services
             VerifyService(repositoryManager));
         }
         public IUserService UserService => _userService.Value;
+        public IAdminService AdminService => _adminService.Value;
         public IDepositService DepositService => _depositService.Value;
         public IWithdrawalService WithdrawalService => _withdrawalService.Value;
         public IVerifyService VerifyService => _verifyService.Value;

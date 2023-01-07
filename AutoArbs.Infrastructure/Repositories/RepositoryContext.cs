@@ -23,6 +23,7 @@ namespace AutoArbs.Infrastructure.Repositories
         }
 
         public DbSet<User>? Users { get; set; }
+        public DbSet<Admin>? Admins { get; set; }
         public DbSet<Withdrawal>? WithdrawalHistories { get; set; }
         public DbSet<Deposit>? DepositHistories { get; set; }
         public DbSet<Otp>? Otps { get; set; }

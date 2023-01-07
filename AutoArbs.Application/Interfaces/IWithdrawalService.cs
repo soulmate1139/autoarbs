@@ -12,6 +12,5 @@ namespace AutoArbs.Application.Interfaces
     {
         Task<ResponseMessageWithRefId> CreateWithdrawal(WithdrawalDto deposit);
         Task<ResponseMessageWithdrawal> GetWithdrawalsByEmail(string userName);
-        Task<ResponseMessage> UpdateWithdrawal(UpdateWithdrawalRequestDto deposit);
     }
 }
