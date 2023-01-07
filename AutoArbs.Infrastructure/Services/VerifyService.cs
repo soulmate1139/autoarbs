@@ -154,7 +154,7 @@ namespace AutoArbs.Infrastructure.Services
                     StatusMessage = "Wrong Action",
                 };
             }
-
+            getUserFromDb.Password = "";
             return new ResponseMessageWithUser
             {
                 StatusCode = "20",
